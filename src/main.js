@@ -7,10 +7,10 @@ import { createPinia } from 'pinia';
 
 
 const pinia = createPinia();
-const app = createApp(App);
 
 
-app
+
+createApp(App)
     .use(Antd)
     .use(router)
     .use(pinia)
