@@ -1,18 +1,23 @@
 <template>
   <div class="navbar">
       <div>
-          <p>SmartLearn</p>
+          <h1>SmartLearn</h1>
       </div>
             <div class="navbar-btns">
-              <span class="user-name">{{ userName }}</span>
-              <UserOutlined class="user" @click="showModal"/>
+              <span class="user-initials" v-if="userAuth" @mouseover="showUserInfo" @mouseout="closeUserInfo">{{ userInitials }}</span>
+              <div class="user-info-block" v-if="showInfoBlock">
+                <div class="user-avatar">{{ userInitials }}</div>
+                  <div class="user-details">
+                    <p class="user-name">{{ userName }}</p>
+                    <p class="user-email">{{ userEmail }}</p>
+                  </div>
+              </div>
+
+              <a-space wrap v-if="!userAuth">
+                <a-button ghost class="sign-btn" @click="$router.push('/sign')">Войти</a-button>
+                <a-button type="primary" class="registration-btn" @click="$router.push('/registration')">Регистрация</a-button>
+              </a-space>
             </div>
-            <a-modal v-model:open="open" class="registration" :width="modalWidth">
-              <template #footer>
-                <a-button style="background: darkcyan; color: white;" class="sign-in" @click="$router.push('/sign'), closeModal()">Войти</a-button>
-                <a-button class="sign-up" @click="logoutUser(), closeModal(), $router.push('/sign');">Выход</a-button>
-              </template>
-            </a-modal>
     </div>
 </template>
 
@@ -25,7 +30,6 @@ import {instance} from "@/axios/axiosInstance";
 import {UserOutlined} from "@ant-design/icons-vue";
 import {message} from "ant-design-vue";
 import {useUserStore} from "@/store/userStore";
-import router from "@/routes/router";
 
 export default {
   components:{
@@ -33,16 +37,16 @@ export default {
   },
   data(){
     return{
-      open: false,
-      modalWidth: "250px"
+      modalWidth: "250px",
+      showInfoBlock: false
     }
   },
   methods:{
-      showModal(){
-        this.open = true;
+      showUserInfo(){
+        this.showInfoBlock = true;
       },
-      closeModal(){
-        this.open = false;
+      closeUserInfo(){
+        this.showInfoBlock = false;
       },
       async logoutUser(){
         const userStore = useUserStore();
@@ -75,7 +79,22 @@ export default {
     userName(){
       const userStore = useUserStore();
       return userStore.user ? userStore.user.name : null;
-    }
+    },
+    userEmail(){
+      const userStore = useUserStore();
+      return userStore.user ? userStore.user.email : null;
+    },
+    userAuth(){
+      const auth = useUserStore();
+      return auth.token !== null;
+    },
+    userInitials() {
+      const initials = this.userName
+          .split(" ")
+          .map((word) => word[0])
+          .join("");
+      return initials.slice(0, 2).toUpperCase();
+    },
   }
 }
 </script>
@@ -88,7 +107,7 @@ export default {
     box-shadow: 2px 2px 4px grey;
     display: flex;
 }
-.navbar p{
+.navbar h1{
   font-family: 'Lemon', serif;
   font-size: 40px;
   color: aliceblue;
@@ -97,14 +116,70 @@ export default {
 .navbar-btns{
   margin-left: 40%;
 }
-.user{
-  font-size: 20px;
+.registration-btn{
+  background-color: black;
+  height: 40px;
+  margin: 4px 0 0 10px;
+}
+.registration-btn:hover{
+  background-color: black;
+}
+.sign-btn{
+  height: 40px;
+  margin: 4px 0 0 300px;
+}
+.sign-btn:hover{
   color: white;
+  border-color: white;
+}
+.user-initials {
+  display: inline-block;
+  margin: 5px 0 0 450px;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: black;
+  color: #fff;
   cursor: pointer;
-  padding: 5px 0 0 80px;
+  font-size: 18px;
+}
+.user-info-block {
+  display: none;
+  position: absolute;
+  width: 300px;
+  max-height: 150px;
+  margin-left: 350px;
+  top: 50px;
+  left: 50%;
+  background-color: #fff;
+  border: 1px solid grey;
+  padding: 5px;
+  overflow: hidden;
 }
 
-.user-name{
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  margin: 20px 0 0 10px;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: black;
   color: #fff;
+  cursor: pointer;
+  font-size: 18px;
+}
+.user-details{
+  font-size: 12px;
+  margin: -38px 0 0 70px;
+}
+.user-name{
+  color: black;
+}
+
+.navbar-btns:hover .user-info-block {
+  display: block;
 }
 </style>

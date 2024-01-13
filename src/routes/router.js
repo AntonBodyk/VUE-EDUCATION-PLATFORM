@@ -3,6 +3,7 @@ import SignPage from '@/pages/SignPage';
 import RegistrationPage from '@/pages/RegistrationPage';
 import { createRouter, createWebHistory } from 'vue-router';
 import MainPage from "@/pages/MainPage.vue";
+import UserPage from "@/pages/UserPage.vue";
 
 
 
@@ -19,6 +20,11 @@ const routes = [
         path: '/registration',
         component: RegistrationPage
     },
+    {
+        path: '/user/{id}',
+        component: UserPage
+    }
+
 ];
 
 const router = createRouter({
