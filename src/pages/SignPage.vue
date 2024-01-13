@@ -15,7 +15,7 @@
           name="email"
           :rules="[
             { required: true, message: 'Пожалуйста, введите электронный адрес!' },
-            { validator: validateEmail },
+            { type: 'email', message: 'Неверный формат электронной почты!' }
           ]"
       >
         <a-input v-model:value="signState.email" />
@@ -75,6 +75,7 @@ export default {
           const token = loginResponse.data.token;
           const userStore = useUserStore();
 
+          console.log(loginResponse.data);
           userStore.setToken(token);
           userStore.setUser(loginResponse.data);
 
@@ -91,24 +92,16 @@ export default {
 
 
       }catch (error){
+        if(error.response.status === 422){
+          console.log('Ошибка входа');
+          return;
+        }else if(error.response.status === 404){
+          message.error('Пользователь не найден!');
+          return;
+        }
         message.error('Ошибка сервера!')
       }
-    },
-    validateEmail(rule, value) {
-      return new Promise((resolve, reject) => {
-        if (value) {
-          const emailPattern = /@/;
-
-          if (emailPattern.test(value)) {
-            return resolve();
-          } else {
-            return reject("Email address should contain the symbol '@'!");
-          }
-        } else {
-          return resolve();
-        }
-      });
-    },
+    }
   }
 }
 </script>

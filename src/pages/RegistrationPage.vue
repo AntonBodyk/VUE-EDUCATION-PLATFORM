@@ -15,7 +15,6 @@
           label="Фото"
           name="avatar"
           :rules="[
-              { required: true, message: 'Пожалуйста, добавьте фото!' },
               {
                   validator: validateAvatar,
               },
@@ -25,17 +24,16 @@
             :before-upload="beforeUpload"
             :show-upload-list="false"
         >
-          <a-button>
-            <a-icon type="upload" /> Выбрать файл
+          <a-button :class="{ 'has-error': hasError }">
+            <a-icon type="upload" /> {{selectedFileName || 'Выбрать файл'}}
           </a-button>
         </a-upload>
-        <div v-if="registrationState.avatar">{{ registrationState.avatar.name }}</div>
       </a-form-item>
       <a-form-item
           label="ФИО"
           name="name"
           :rules="[
-              { required: true, message: 'Пожалуйста, введите имя!' },
+              { required: true, message: 'Пожалуйста, введите данные!' },
               {
                   validator: validateName,
               },
@@ -46,10 +44,9 @@
 
       <a-form-item name="email" label="Email" :rules="[
             { required: true, message: 'Пожалуйста, введите адрес электронной почты!' },
-            { type: 'email', message: 'Неверный формат электронной почты!' },
-            { validator: validateEmail },
+            { type: 'email', message: 'Неверный формат электронной почты!' }
         ]">
-        <a-input v-model:value="registrationState.email" @input="clearEmailValidation" />
+        <a-input v-model:value="registrationState.email"  />
       </a-form-item>
 
       <a-form-item label="Роль"
@@ -105,6 +102,8 @@ import router from "@/routes/router";
     data() {
       return {
         roles: [],
+        hasError: false,
+        selectedFileName: null,
         registrationState: {
           avatar: null,
           name: '',
@@ -118,24 +117,14 @@ import router from "@/routes/router";
     methods: {
       async registrationUser() {
         try {
+
           const formData = new FormData();
           formData.append('avatar', this.registrationState.avatar);
-
           formData.append('name', this.registrationState.name);
           formData.append('email', this.registrationState.email);
           formData.append('role_id', this.registrationState.role_id);
           formData.append('password', this.registrationState.password);
 
-
-          // Проводим валидацию перед отправкой запроса
-          await this.$refs.formRef.validate();
-          console.log('Validation passed, sending API request...');
-
-          console.log('API request succeeded:', registration.data);
-          // // Если есть ошибки валидации, просто завершаем функцию
-          if (this.$refs.formRef.formModel.$pending && Object.keys(this.$refs.formRef.formModel.$pending).length > 0) {
-            return;
-          }
 
           const registrationResponse = await instance.post('/register', formData, {
             headers: {
@@ -143,6 +132,8 @@ import router from "@/routes/router";
             },
           });
 
+          await this.$refs.formRef.validate();
+          console.log('Validation passed, sending API request...');
 
           if (registrationResponse.data && registrationResponse.data.status) {
             this.registrationState = {
@@ -159,8 +150,12 @@ import router from "@/routes/router";
             message.error('Ошибка при регистрации: ' + registrationResponse.data.message);
           }
         } catch (error) {
-            console.error('Error during API request:', error);
-            message.error('Ошибка сервера!');
+          if(error.response.status === 422){
+            console.log('Ошибка при регистрации')
+            return;
+          }
+          console.error('Error during API request:', error);
+          message.error('Ошибка сервера!');
         }
       },
       async getUserRoles() {
@@ -174,14 +169,17 @@ import router from "@/routes/router";
       },
       beforeUpload(file) {
         if (file) {
-          this.registrationState.avatarName = file.name;
           this.registrationState.avatar = file;
+          this.selectedFileName = file.name;
+          this.hasError = false
+        }else{
+          this.hasError = true;
         }
         return false; // Отмена автоматической загрузки файла
       },
       validateAvatar(rule, value) {
         if (!value) {
-          return Promise.reject('Пожалуйста, выберите файл для аватара');
+          return Promise.reject('Пожалуйста, добавьте фото!');
         }
 
         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
@@ -208,25 +206,6 @@ import router from "@/routes/router";
           }
         });
       },
-      validateEmail(rule, value) {
-        return new Promise((resolve, reject) => {
-          if (value) {
-            const emailPattern = /@/;
-
-            if (emailPattern.test(value)) {
-              return resolve();
-            } else {
-              return reject("Email address should contain the symbol '@'!");
-            }
-          } else {
-            return resolve();
-          }
-        });
-      },
-      clearEmailValidation() {
-        // Assuming some form validation method is available
-        this.$refs.formRef.clearValidate('user.email');
-      },
       validateConfirmPassword(rule, value) {
         return new Promise((resolve, reject) => {
           if (value !== this.registrationState.password) {
@@ -243,7 +222,7 @@ import router from "@/routes/router";
           case 'teacher':
             return 'Учитель';
           case 'student':
-            return 'Учень';
+            return 'Ученик';
           default:
             return roleName;
         }
@@ -263,5 +242,8 @@ h1{
   margin-left: 34%;
   font-size: 40px;
   color: darkcyan;
+}
+.has-error{
+  border-color: red;
 }
 </style>
