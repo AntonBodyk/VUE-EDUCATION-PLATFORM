@@ -4,13 +4,18 @@
           <h1>SmartLearn</h1>
       </div>
             <div class="navbar-btns">
-              <span class="user-initials" v-if="userAuth" @mouseover="showUserInfo" @mouseout="closeUserInfo">{{ userInitials }}</span>
-              <div class="user-info-block" v-if="showInfoBlock">
+              <span class="user-initials" v-if="userAuth" @mouseover="showUserInfo">
+                <img :src="`${userAvatar}`" alt="User Avatar" />
+              </span>
+              <div class="user-info-block" v-if="showInfoBlock" @mouseover="keepUserInfoVisible">
                 <div class="user-avatar">{{ userInitials }}</div>
                   <div class="user-details">
                     <p class="user-name">{{ userName }}</p>
                     <p class="user-email">{{ userEmail }}</p>
                   </div>
+                <a-space wrap>
+                  <a-button class="exit-button" @click="logoutUser()">Выход</a-button>
+                </a-space>
               </div>
 
               <a-space wrap v-if="!userAuth">
@@ -48,6 +53,7 @@ export default {
       closeUserInfo(){
         this.showInfoBlock = false;
       },
+      keepUserInfoVisible() {},
       async logoutUser(){
         const userStore = useUserStore();
         const accessToken = localStorage.getItem('auth_token');
@@ -84,16 +90,27 @@ export default {
       const userStore = useUserStore();
       return userStore.user ? userStore.user.email : null;
     },
+    userAvatar(){
+      const userStore = useUserStore();
+      return userStore.user ? userStore.user.avatar : null;
+    },
     userAuth(){
       const auth = useUserStore();
       return auth.token !== null;
     },
     userInitials() {
-      const initials = this.userName
-          .split(" ")
-          .map((word) => word[0])
-          .join("");
-      return initials.slice(0, 2).toUpperCase();
+      const userStore = useUserStore();
+      const userName = userStore.user ? userStore.user.name : null;
+
+      if(userName){
+        const initials = this.userName
+            .split(" ")
+            .map((word) => word[0])
+            .join("");
+        return initials.slice(0, 2).toUpperCase();
+      }else{
+        return null;
+      }
     },
   }
 }
@@ -181,5 +198,16 @@ export default {
 
 .navbar-btns:hover .user-info-block {
   display: block;
+}
+
+.exit-button{
+  color: white;
+  background-color: black;
+  margin: 0 0 10px 70px;
+}
+.exit-button:hover{
+  color: white;
+  background-color: black;
+  border-color: black;
 }
 </style>
