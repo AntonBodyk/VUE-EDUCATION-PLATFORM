@@ -5,7 +5,7 @@
       </div>
             <div class="navbar-btns">
               <span class="user-initials" v-if="userAuth" @mouseover="showUserInfo">
-                <img :src="`${userAvatar}`" alt="User Avatar" />
+                <img :src="`${fullUrl}`" alt="User Avatar" />
               </span>
               <div class="user-info-block" v-if="showInfoBlock" @mouseover="keepUserInfoVisible">
                 <div class="user-avatar">{{ userInitials }}</div>
@@ -43,14 +43,15 @@ export default {
   data(){
     return{
       modalWidth: "250px",
-      showInfoBlock: false
+      showInfoBlock: false,
+      avatarFullUrl: null
     }
   },
   methods:{
       showUserInfo(){
         this.showInfoBlock = true;
       },
-      closeUserInfo(){
+      closeUserInfo() {
         this.showInfoBlock = false;
       },
       keepUserInfoVisible() {},
