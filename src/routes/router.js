@@ -21,7 +21,7 @@ const routes = [
         component: RegistrationPage
     },
     {
-        path: '/user/{id}',
+        path: '/:id',
         component: UserPage
     }
 

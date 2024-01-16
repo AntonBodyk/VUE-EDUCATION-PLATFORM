@@ -175,7 +175,7 @@ import router from "@/routes/router";
         }else{
           this.hasError = true;
         }
-        return false; // Отмена автоматической загрузки файла
+        return false;
       },
       validateAvatar(rule, value) {
         if (!value) {
@@ -194,12 +194,13 @@ import router from "@/routes/router";
       validateName(rule, value) {
         return new Promise((resolve, reject) => {
           if (value) {
-            const namePattern = /^([a-zA-Zа-яёґєії]+[\s]{0,1}[a-zA-Zа-яёґєії]+[\s]{0,1}[a-zA-Zа-яёґєії]+)$/ig;
+            const words = value.split(/\s+/);
+            const isCorrect = words.every(word => /^[A-ZА-ЯЁҐЄІЇ][a-zа-яёґєії]*$/.test(word));
 
-            if (namePattern.test(value)) {
+            if (isCorrect) {
               resolve();
             } else {
-              reject('Имя должно начинаться с большой буквы и не содержать чисел!');
+              reject('Каждое слово должно начинаться с большой буквы и не содержать чисел!');
             }
           } else {
             resolve();

@@ -3,27 +3,36 @@
       <div>
           <h1>SmartLearn</h1>
       </div>
-            <div class="navbar-btns">
-              <span class="user-initials" v-if="userAuth" @mouseover="showUserInfo">
-                <img :src="`${fullUrl}`" alt="User Avatar" />
-              </span>
-              <div class="user-info-block" v-if="showInfoBlock" @mouseover="keepUserInfoVisible">
-                <div class="user-avatar">{{ userInitials }}</div>
-                  <div class="user-details">
-                    <p class="user-name">{{ userName }}</p>
-                    <p class="user-email">{{ userEmail }}</p>
-                  </div>
-                <a-space wrap>
-                  <a-button class="exit-button" @click="logoutUser()">Выход</a-button>
-                </a-space>
-              </div>
+    <div class="navbar-btns">
+      <div class="user-initials" v-if="userAuth">
+        <div @mouseover="showUserInfo" @click="navigateToUserPage()">
+          <img v-if="userAvatar" :src="userAvatar" class="user-photo" alt="User Avatar" />
+          <div v-else class="user-avatar">{{ userInitials }}</div>
+        </div>
 
-              <a-space wrap v-if="!userAuth">
-                <a-button ghost class="sign-btn" @click="$router.push('/sign')">Войти</a-button>
-                <a-button type="primary" class="registration-btn" @click="$router.push('/registration')">Регистрация</a-button>
-              </a-space>
+        <a-space wrap>
+          <div class="user-info-block" v-if="showInfoBlock" @mouseover="keepUserInfoVisible">
+            <div class="user-info">
+              <img v-if="userAvatar" :src="userAvatar" class="user-photo" alt="User Avatar" />
+              <div v-else class="user-info-avatar">{{ userInitials }}</div>
             </div>
+            <div class="user-details">
+              <p @click="navigateToUserPage()" class="user-name">{{ userName }}</p>
+              <p class="user-email">{{ userEmail }}</p>
+              <a-button class="exit-button" @click="logoutUser()">Выход</a-button>
+            </div>
+          </div>
+        </a-space>
+      </div>
+
+      <a-space wrap v-else>
+        <a-button ghost class="sign-btn" @click="$router.push('/sign')">Войти</a-button>
+        <a-button type="primary" class="registration-btn" @click="$router.push('/registration')">Регистрация</a-button>
+      </a-space>
     </div>
+  </div>
+
+
 </template>
 
 
@@ -35,16 +44,12 @@ import {instance} from "@/axios/axiosInstance";
 import {UserOutlined} from "@ant-design/icons-vue";
 import {message} from "ant-design-vue";
 import {useUserStore} from "@/store/userStore";
+import router from "@/routes/router";
 
 export default {
-  components:{
-    UserOutlined
-  },
   data(){
     return{
-      modalWidth: "250px",
-      showInfoBlock: false,
-      avatarFullUrl: null
+      showInfoBlock: false
     }
   },
   methods:{
@@ -55,6 +60,13 @@ export default {
         this.showInfoBlock = false;
       },
       keepUserInfoVisible() {},
+      navigateToUserPage(){
+        if (localStorage.getItem('auth_user') && localStorage.getItem('auth_token') !== null) {
+          const userStore = useUserStore();
+          const userId = userStore.user ? userStore.user.id : null;
+          router.push(`/${userId}`);
+        }
+      },
       async logoutUser(){
         const userStore = useUserStore();
         const accessToken = localStorage.getItem('auth_token');
@@ -73,6 +85,7 @@ export default {
             userStore.clearAuthUser();
 
             message.success('Вы вышли с аккаунта');
+            router.push('/');
           }else{
             message.error('Ошибка', logoutResponse);
           }
@@ -150,11 +163,23 @@ export default {
   color: white;
   border-color: white;
 }
-.user-initials {
+.user-initials .user-photo {
   display: inline-block;
   margin: 5px 0 0 450px;
   width: 40px;
   height: 40px;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: black;
+  color: #fff;
+  cursor: pointer;
+  font-size: 18px;
+}
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  margin: 5px 0 0 450px;
   line-height: 40px;
   text-align: center;
   border-radius: 50%;
@@ -177,7 +202,7 @@ export default {
   overflow: hidden;
 }
 
-.user-avatar {
+.user-info-avatar {
   width: 40px;
   height: 40px;
   margin: 20px 0 0 10px;
@@ -195,20 +220,38 @@ export default {
 }
 .user-name{
   color: black;
+  cursor: pointer;
+}
+.user-name:hover{
+  color: cadetblue;
 }
 
-.navbar-btns:hover .user-info-block {
+.user-initials:hover .user-info-block {
   display: block;
 }
 
 .exit-button{
   color: white;
   background-color: black;
-  margin: 0 0 10px 70px;
+  margin-bottom: 10px;
 }
 .exit-button:hover{
   color: white;
   background-color: black;
   border-color: black;
 }
+.user-info .user-photo{
+  margin: 8px 0 0 10px;
+  display: block;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: black;
+  color: #fff;
+  cursor: pointer;
+  font-size: 18px;
+}
+
 </style>
