@@ -30,8 +30,20 @@
         </a-upload>
       </a-form-item>
       <a-form-item
-          label="ФИО"
-          name="name"
+          label="Фамилия"
+          name="second_name"
+          :rules="[
+              { required: true, message: 'Пожалуйста, введите данные!' },
+              {
+                  validator: validateSecondName,
+              },
+            ]"
+      >
+        <a-input v-model:value="registrationState.second_name" />
+      </a-form-item>
+      <a-form-item
+          label="Имя"
+          name="first_name"
           :rules="[
               { required: true, message: 'Пожалуйста, введите данные!' },
               {
@@ -39,7 +51,19 @@
               },
             ]"
       >
-        <a-input v-model:value="registrationState.name" />
+        <a-input v-model:value="registrationState.first_name" />
+      </a-form-item>
+      <a-form-item
+          label="Отчество"
+          name="last_name"
+          :rules="[
+              { required: true, message: 'Пожалуйста, введите данные!' },
+              {
+                  validator: validateLastName,
+              },
+            ]"
+      >
+        <a-input v-model:value="registrationState.last_name" />
       </a-form-item>
 
       <a-form-item name="email" label="Email" :rules="[
@@ -75,14 +99,14 @@
 
       <a-form-item has-feedback
                    label="Подтвердите пароль"
-                   name="checkPass"
+                   name="password_confirmation"
                    :rules="[
                       { required: true, message: 'Пожалуйста, повторите пароль!' },
                       {
                           validator: validateConfirmPassword,
                       },
                    ]">
-        <a-input v-model:value="registrationState.checkPass" type="password" autocomplete="off" />
+        <a-input v-model:value="registrationState.password_confirmation" type="password" autocomplete="off" />
       </a-form-item>
 
       <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
@@ -106,11 +130,13 @@ import router from "@/routes/router";
         selectedFileName: null,
         registrationState: {
           avatar: null,
-          name: '',
+          second_name: '',
+          first_name: '',
+          last_name: '',
           email: '',
           role_id: null,
           password: '',
-          checkPass: '',
+          password_confirmation: '',
         },
       };
     },
@@ -120,11 +146,13 @@ import router from "@/routes/router";
 
           const formData = new FormData();
           formData.append('avatar', this.registrationState.avatar);
-          formData.append('name', this.registrationState.name);
+          formData.append('second_name', this.registrationState.second_name);
+          formData.append('first_name', this.registrationState.first_name);
+          formData.append('last_name', this.registrationState.last_name);
           formData.append('email', this.registrationState.email);
           formData.append('role_id', this.registrationState.role_id);
           formData.append('password', this.registrationState.password);
-
+          formData.append('password_confirmation', this.registrationState.password_confirmation);
 
           const registrationResponse = await instance.post('/register', formData, {
             headers: {
@@ -138,11 +166,13 @@ import router from "@/routes/router";
           if (registrationResponse.data && registrationResponse.data.status) {
             this.registrationState = {
               avatar: null,
-              name: '',
+              second_name: '',
+              first_name: '',
+              last_name: '',
               email: '',
               role_id: null,
               password: '',
-              checkPass: '',
+              password_confirmation: '',
             };
             message.success('Регистрация прошла успешно!');
             router.push('/sign');
@@ -193,15 +223,47 @@ import router from "@/routes/router";
       },
       validateName(rule, value) {
         return new Promise((resolve, reject) => {
-          if (value) {
-            const words = value.split(/\s+/);
-            const isCorrect = words.every(word => /^[A-ZА-ЯЁҐЄІЇ][a-zа-яёґєії]*$/.test(word));
+          if (value){
+            const containsDigits = /\d/.test(value);
 
-            if (isCorrect) {
-              resolve();
+            if (containsDigits) {
+              reject('Имя не должно содержать цифры!');
             } else {
-              reject('Каждое слово должно начинаться с большой буквы и не содержать чисел!');
+              resolve();
             }
+
+          } else {
+            resolve();
+          }
+        });
+      },
+      validateSecondName(rule, value) {
+        return new Promise((resolve, reject) => {
+          if (value){
+            const containsDigits = /\d/.test(value);
+
+            if (containsDigits) {
+              reject('Фамилия не должна содержать цифры!');
+            } else {
+              resolve();
+            }
+
+          } else {
+            resolve();
+          }
+        });
+      },
+      validateLastName(rule, value) {
+        return new Promise((resolve, reject) => {
+          if (value){
+            const containsDigits = /\d/.test(value);
+
+            if (containsDigits) {
+              reject('Отчество не должно содержать цифры!');
+            } else {
+              resolve();
+            }
+
           } else {
             resolve();
           }

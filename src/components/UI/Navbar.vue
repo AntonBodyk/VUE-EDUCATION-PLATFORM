@@ -17,7 +17,7 @@
               <div v-else class="user-info-avatar">{{ userInitials }}</div>
             </div>
             <div class="user-details">
-              <p @click="navigateToUserPage()" class="user-name">{{ userName }}</p>
+              <p @click="navigateToUserPage()" class="user-name">{{ userSecondName + ' ' + userName + ' ' + userLastName }}</p>
               <p class="user-email">{{ userEmail }}</p>
               <a-button class="exit-button" @click="logoutUser()">Выход</a-button>
             </div>
@@ -98,7 +98,15 @@ export default {
   computed:{
     userName(){
       const userStore = useUserStore();
-      return userStore.user ? userStore.user.name : null;
+      return userStore.user ? userStore.user.first_name : null;
+    },
+    userSecondName(){
+      const userStore = useUserStore();
+      return userStore.user ? userStore.user.second_name : null;
+    },
+    userLastName(){
+      const userStore = useUserStore();
+      return userStore.user ? userStore.user.last_name : null;
     },
     userEmail(){
       const userStore = useUserStore();
