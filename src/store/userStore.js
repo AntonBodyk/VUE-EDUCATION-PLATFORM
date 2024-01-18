@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import {instance} from "@/axios/axiosInstance";
 
 
 export const useUserStore = defineStore('user', {
@@ -14,6 +15,17 @@ export const useUserStore = defineStore('user', {
         setUser(user) {
             this.user = user.user;
             localStorage.setItem('auth_user', JSON.stringify(user.user));
+        },
+        async updateUserProfile(updatedUserProfile) {
+            try {
+                const response = await instance.patch(`users/${updatedUserProfile.id}`, updatedUserProfile);
+                console.log('Профиль успешно обновлен:', response.data);
+
+                this.setUser(response.data.userProfile);
+            } catch (error) {
+                console.error('Ошибка при обновлении профиля:', error);
+
+            }
         },
         clearToken() {
             this.token = null;

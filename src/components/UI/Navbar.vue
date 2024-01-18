@@ -108,6 +108,9 @@ export default {
       const userStore = useUserStore();
       return userStore.user ? userStore.user.last_name : null;
     },
+    combinedName(){
+      return this.userName + ' ' + this.userLastName;
+    },
     userEmail(){
       const userStore = useUserStore();
       return userStore.user ? userStore.user.email : null;
@@ -122,10 +125,13 @@ export default {
     },
     userInitials() {
       const userStore = useUserStore();
-      const userName = userStore.user ? userStore.user.name : null;
+      const userName = userStore.user ? userStore.user.first_name : null;
+      const lastName = userStore.user ? userStore.user.last_name : null;
 
-      if(userName){
-        const initials = this.userName
+      const combinedName = userName + ' ' + lastName;
+
+      if(combinedName){
+        const initials = this.combinedName
             .split(" ")
             .map((word) => word[0])
             .join("");
