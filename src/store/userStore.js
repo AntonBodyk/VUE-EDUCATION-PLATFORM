@@ -19,12 +19,10 @@ export const useUserStore = defineStore('user', {
         async updateUserProfile(updatedUserProfile) {
             try {
                 const response = await instance.patch(`users/${updatedUserProfile.id}`, updatedUserProfile);
-                console.log('Профиль успешно обновлен:', response.data);
-
+                console.log('Ответ сервера:', response.data);
                 this.setUser(response.data.userProfile);
             } catch (error) {
-                console.error('Ошибка при обновлении профиля:', error);
-
+                console.error('Ошибка Axios:', error);
             }
         },
         clearToken() {

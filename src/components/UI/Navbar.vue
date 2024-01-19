@@ -41,7 +41,6 @@
 
 <script>
 import {instance} from "@/axios/axiosInstance";
-import {UserOutlined} from "@ant-design/icons-vue";
 import {message} from "ant-design-vue";
 import {useUserStore} from "@/store/userStore";
 import router from "@/routes/router";

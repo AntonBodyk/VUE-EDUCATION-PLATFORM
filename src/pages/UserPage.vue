@@ -1,9 +1,9 @@
 <template>
   <div class="account-container">
-    <h1 class="account-title">Мой аккаунт</h1>
+    <h1 class="account-title">Обновите свои данные</h1>
 
     <a-form
-        :model="this.userInfo"
+        :model="userInfo"
         name="userProfileForm"
         :label-col="{ span: 8 }"
         :wrapper-col="{ span: 16 }"
@@ -112,13 +112,25 @@ export default {
 
 <style scoped>
 .account-container {
+  margin-top: 20px;
   text-align: center;
+  background-color: #f5f5f5; /* Цвет фона */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .account-title {
+  font-family: "Kanit", sans-serif;
+  font-weight: 400;
+  font-style: normal;
   font-size: 28px;
   margin-bottom: 20px;
-  color: #1890ff;
+  color: #333; /* Цвет заголовка */
+}
+
+.avatar-upload {
+  margin-bottom: 20px;
 }
 
 .avatar {
