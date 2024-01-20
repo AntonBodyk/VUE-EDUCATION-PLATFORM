@@ -3,6 +3,10 @@
       <div>
           <h1>SmartLearn</h1>
       </div>
+
+    <div class="user-courses" v-if="userId === 3">
+      <a href="#">Мои курсы</a>
+    </div>
     <div class="navbar-btns">
       <div class="user-initials" v-if="userAuth">
         <div @mouseover="showUserInfo" @click="navigateToUserPage()">
@@ -95,6 +99,10 @@ export default {
       }
   },
   computed:{
+    userId(){
+      const userStore = useUserStore();
+      return userStore.user ? userStore.user.id : null;
+    },
     userName(){
       const userStore = useUserStore();
       return userStore.user ? userStore.user.first_name : null;

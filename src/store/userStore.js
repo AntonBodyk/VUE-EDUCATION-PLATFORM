@@ -20,7 +20,8 @@ export const useUserStore = defineStore('user', {
             try {
                 const response = await instance.patch(`users/${updatedUserProfile.id}`, updatedUserProfile);
                 console.log('Ответ сервера:', response.data);
-                this.setUser(response.data.userProfile);
+                const updatedUserData = await instance.get(`users/${updatedUserProfile.id}`);
+                this.setUser(updatedUserData.data);
             } catch (error) {
                 console.error('Ошибка Axios:', error);
             }
