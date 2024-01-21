@@ -4,10 +4,10 @@
           <h1>SmartLearn</h1>
       </div>
 
-    <div class="user-courses" v-if="userId === 3">
-      <a href="#">Мои курсы</a>
-    </div>
     <div class="navbar-btns">
+      <div class="user-courses" v-if="userId">
+        <a class="user-courses-link" href="#">Мои курсы</a>
+      </div>
       <div class="user-initials" v-if="userAuth">
         <div @mouseover="showUserInfo" @click="navigateToUserPage()">
           <img v-if="userAvatar" :src="userAvatar" class="user-photo" alt="User Avatar" />
@@ -184,6 +184,9 @@ export default {
   color: white;
   border-color: white;
 }
+.user-initials{
+
+}
 .user-initials .user-photo {
   display: inline-block;
   margin: 5px 0 0 450px;
@@ -274,5 +277,12 @@ export default {
   cursor: pointer;
   font-size: 18px;
 }
+.user-courses-link{
+  color: white;
+  text-decoration: none;
+}
+.user-courses-link:hover{
+  color: white;
 
+}
 </style>

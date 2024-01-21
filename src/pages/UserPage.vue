@@ -17,7 +17,7 @@
             :show-upload-list="false"
             class="custom-upload"
         >
-          <a-avatar :src="userInfo.avatar" size="large" class="avatar" />
+          <a-avatar :src="userInfo.avatar" size="large" class="avatar"></a-avatar>
         </a-upload>
       </a-form-item>
 
@@ -90,21 +90,34 @@ export default {
           return roleName;
       }
     },
-    async updateUserInfo(){
+    async updateUserInfo() {
       try {
         const userStore = useUserStore();
-        await userStore.updateUserProfile(this.userInfo);
+
+        // Проверка, что userInfo и avatar существуют
+        if (this.userInfo && this.userInfo.avatar) {
+          // Извлекаем имя файла из URL
+          const fileName = this.userInfo.avatar.split('/').pop();
+
+          // Обновляем данные в local storage
+          userStore.setUser(this.userInfo);
+
+          // Отправляем измененные данные на сервер
+          await userStore.updateUserProfile(this.userInfo);
+        } else {
+          console.error('Invalid userInfo or avatar data');
+        }
 
       } catch (e) {
         console.error('Error updating user profile:', e);
       }
-    }
+    },
   },
   computed:{
     userInfo(){
       const userInfo = useUserStore();
       return userInfo.user;
-    }
+    },
   },
   mounted() {
     this.getUserRoles();

@@ -110,7 +110,7 @@
       </a-form-item>
 
       <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-        <a-button type="primary" html-type="submit">Зарегистрироваться</a-button>
+        <a-button class="register-btn" type="primary" html-type="submit">Зарегистрироваться</a-button>
       </a-form-item>
     </a-form>
   </div>
@@ -308,5 +308,11 @@ h1{
 }
 .has-error{
   border-color: red;
+}
+.register-btn{
+  background-color: cadetblue;
+}
+.register-btn:hover{
+  background-color: cadetblue;
 }
 </style>

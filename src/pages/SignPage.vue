@@ -40,7 +40,7 @@
       </a-form-item>
 
       <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-        <a-button type="primary" html-type="submit">Войти</a-button>
+        <a-button class="sign-btn" type="primary" html-type="submit">Войти</a-button>
       </a-form-item>
     </a-form>
     <p class="registration">Нет аккаунта? <router-link to="/registration">Зарегистрироваться</router-link></p>
@@ -118,5 +118,12 @@ h1{
 .registration a{
   color: cadetblue;
   text-decoration: none;
+}
+
+.sign-btn{
+  background-color: cadetblue;
+}
+.sign-btn:hover {
+  background-color: cadetblue;
 }
 </style>
