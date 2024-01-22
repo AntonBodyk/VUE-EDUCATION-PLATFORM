@@ -10,15 +10,15 @@
       </div>
       <div class="user-initials" v-if="userAuth">
         <div class="user-icons" @click="navigateToUserPage()">
-          <img v-if="userAvatar" :src="userAvatar" class="user-photo" alt="User Avatar" @mouseover="showUserInfo" />
-          <div v-else class="user-avatar" @mouseover="showUserInfo" >{{ userInitials }}</div>
+          <img v-if="userAvatar && userAvatar.length > 0" :src="userAvatar" class="user-photo" alt="User Avatar" @mouseover="showUserInfo" />
+          <div v-else class="user-avatar" @mouseover="showUserInfo" >{{ userAvatar && userAvatar.length > 0 ? '' : userInitials }} </div>
         </div>
 
         <a-space wrap>
           <div class="user-info-block" :style="{ display: showInfoBlock ? 'block' : 'none' }" @mouseover="keepUserInfoVisible" @mouseleave="closeUserInfo">
             <div class="user-info">
-              <img v-if="userAvatar" :src="userAvatar" class="user-photo" alt="User Avatar" />
-              <div v-else class="user-info-avatar">{{ userInitials }}</div>
+              <img v-if="userAvatar && userAvatar.length > 0" :src="userAvatar" class="user-photo" alt="User Avatar" />
+              <div v-else class="user-info-avatar">{{ userInitials && userAvatar.length > 0 ? '' : userInitials}}</div>
             </div>
             <div class="user-details">
               <p @click="navigateToUserPage()" class="user-name">{{ userSecondName + ' ' + userName + ' ' + userLastName }}</p>

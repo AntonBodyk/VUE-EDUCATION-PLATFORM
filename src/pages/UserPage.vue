@@ -11,7 +11,7 @@
         @submit.prevent="updateUserProfile"
         class="form-update"
     >
-      <a-form-item label="Фото">
+      <a-form-item label="Фото" name="avatar">
         <a-upload
             :before-upload="beforeUpload"
             :show-upload-list="false"
@@ -22,15 +22,17 @@
       </a-form-item>
 
       <a-form-item label="Фамилия" name="second_name">
-        <a-input class="second-name" v-if="userInfo && userInfo.second_name" v-model:value="userInfo.second_name" />
+        <a-input class="second-name" v-if="userInfo && userInfo.second_name !== null" v-model:value="userInfo.second_name" />
       </a-form-item>
       <a-form-item label="Имя" name="first_name">
-        <a-input class="first-name" v-if="userInfo && userInfo.first_name" v-model:value="userInfo.first_name" />
+        <a-input class="first-name" v-if="userInfo && userInfo.first_name !== null" v-model:value="userInfo.first_name" />
       </a-form-item>
       <a-form-item label="Отчество" name="last_name">
-        <a-input class="last-name" v-if="userInfo && userInfo.last_name" v-model:value="userInfo.last_name" />
+        <a-input class="last-name" v-if="userInfo && userInfo.last_name !== null" v-model:value="userInfo.last_name" />
       </a-form-item>
-
+      <a-form-item label="Эл. почта" name="email">
+        <a-input class="last-name" v-if="userInfo && userInfo.email !== null" v-model:value="userInfo.email" />
+      </a-form-item>
       <a-form-item label="Статус" name="role_id">
         <a-select class="user-select-name" v-if="userInfo && userInfo.role_id" v-model:value="userInfo.role_id">
           <a-select-option  v-for="role in filteredRoles()" :key="role.id" :value="role.id">{{ newRoleName(role.role_name) }}</a-select-option>
@@ -47,27 +49,21 @@
 <script>
 import {instance} from "@/axios/axiosInstance";
 import {useUserStore} from "@/store/userStore";
+import {message} from "ant-design-vue";
 
 export default {
   data() {
     return {
       roles: [],
-      // userProfile: {
-      //   avatar: '',
-      //   first_name: '',
-      //   second_name: '',
-      //   last_name: '',
-      //   role_id: '',
-      // },
+      file: null
     };
   },
   methods: {
-
-    // beforeUpload(file) {
-    //   console.log('Загрузка фото:', file);
-    //   this.userInfo.avatar = URL.createObjectURL(file);
-    //   return false;
-    // },
+    beforeUpload(file) {
+      console.log('Загрузка фото:', file);
+      this.userInfo.avatar = file
+      return false;
+    },
     async getUserRoles() {
       try {
         const response = await instance.get('/roles');
@@ -94,26 +90,35 @@ export default {
       const userStore = useUserStore();
 
       try {
+        const formData = new FormData();
+        formData.append('id', userStore.user.id);
 
-        // Предполагается, что userInfo содержит обновленные данные профиля пользователя
-        const response = await instance.patch(`/users/${this.userInfo.id}`, this.userInfo);
+        // Вместо добавления this.file добавляем весь файл
+        if (this.userInfo.avatar) {
+          formData.append('avatar', this.userInfo.avatar);
+        }
 
+        formData.append('second_name', this.userInfo.second_name || '');
+        formData.append('first_name', this.userInfo.first_name || '');
+        formData.append('last_name', this.userInfo.last_name || '');
+        formData.append('email', this.userInfo.email || '');
+        formData.append('role_id', this.userInfo.role_id || '');
+
+        // Отправляем запрос на сервер
+        const response = await instance.patch(`/users/${userStore.user.id}`, formData);
+
+        // Проверяем формат ответа
         console.log('Server Response:', response.data);
 
-        // Проверьте значения перед обновлением локальных данных
-        console.log('Before Update Locally:', userStore.user);
+        // Обновляем локальные данные пользователя на фронтенде только после успешного ответа от сервера
+        if (response.data.user) {
+          userStore.setUser(response.data.user);
+          console.log('Updated Locally:', userStore.user);
+        }
 
-        // Обновить локальные данные пользователя на фронтенде
-        userStore.updateUserLocally(response.data);
-
-        // Проверьте значения после обновления локальных данных
-        console.log('After Update Locally:', userStore.user);
-
-        console.log('User profile updated successfully on server and locally!');
-
-        console.log('Профиль пользователя успешно обновлен на сервере и на фронтенде!');
+        message.success('Профиль обновлен!');
       } catch (error) {
-        console.error('Ошибка при обновлении профиля пользователя:', error);
+        console.error('Ошибка при обновлении профиля:', error);
       }
     },
   },

@@ -77,7 +77,7 @@ export default {
 
           console.log(loginResponse.data);
           userStore.setToken(token);
-          userStore.setUser(loginResponse.data);
+          userStore.setUser(loginResponse.data.user);
 
           message.success('Вход выполнен!');
           router.push('/');

@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import {instance} from "@/axios/axiosInstance";
 
 
 export const useUserStore = defineStore('user', {
@@ -13,11 +12,8 @@ export const useUserStore = defineStore('user', {
             localStorage.setItem('auth_token', token);
         },
         setUser(user) {
-            this.user = user.user;
-            localStorage.setItem('auth_user', JSON.stringify(user.user));
-        },
-        updateUserLocally(updatedUserData) {
-            this.setUser(updatedUserData);
+            this.user = user;
+            localStorage.setItem('auth_user', JSON.stringify(user));
         },
         clearToken() {
             this.token = null;
