@@ -9,13 +9,13 @@
         <a class="user-courses-link" href="#">Мои курсы</a>
       </div>
       <div class="user-initials" v-if="userAuth">
-        <div @mouseover="showUserInfo" @click="navigateToUserPage()">
-          <img v-if="userAvatar" :src="userAvatar" class="user-photo" alt="User Avatar" />
-          <div v-else class="user-avatar">{{ userInitials }}</div>
+        <div class="user-icons" @click="navigateToUserPage()">
+          <img v-if="userAvatar" :src="userAvatar" class="user-photo" alt="User Avatar" @mouseover="showUserInfo" />
+          <div v-else class="user-avatar" @mouseover="showUserInfo" >{{ userInitials }}</div>
         </div>
 
         <a-space wrap>
-          <div class="user-info-block" v-if="showInfoBlock" @mouseover="keepUserInfoVisible">
+          <div class="user-info-block" :style="{ display: showInfoBlock ? 'block' : 'none' }" @mouseover="keepUserInfoVisible" @mouseleave="closeUserInfo">
             <div class="user-info">
               <img v-if="userAvatar" :src="userAvatar" class="user-photo" alt="User Avatar" />
               <div v-else class="user-info-avatar">{{ userInitials }}</div>
@@ -52,17 +52,20 @@ import router from "@/routes/router";
 export default {
   data(){
     return{
-      showInfoBlock: false
+      showInfoBlock: false,
     }
   },
   methods:{
       showUserInfo(){
+        console.log('Mouse over');
         this.showInfoBlock = true;
       },
       closeUserInfo() {
         this.showInfoBlock = false;
       },
-      keepUserInfoVisible() {},
+      keepUserInfoVisible() {
+        this.showInfoBlock = true;
+      },
       navigateToUserPage(){
         if (localStorage.getItem('auth_user') && localStorage.getItem('auth_token') !== null) {
           const userStore = useUserStore();
@@ -153,6 +156,7 @@ export default {
 
 
 <style scoped>
+
 .navbar{
     height: 50px;
     background-color: darkslategray;
@@ -249,11 +253,6 @@ export default {
 .user-name:hover{
   color: cadetblue;
 }
-
-.user-initials:hover .user-info-block {
-  display: block;
-}
-
 .exit-button{
   color: white;
   background-color: black;
@@ -277,12 +276,19 @@ export default {
   cursor: pointer;
   font-size: 18px;
 }
+.user-courses{
+  margin: 15px 0 0 230px;
+}
 .user-courses-link{
+  font-family: "Rubik", sans-serif;
   color: white;
   text-decoration: none;
+  cursor: pointer;
 }
 .user-courses-link:hover{
   color: white;
-
+}
+.user-icons{
+  margin-top: -33px;
 }
 </style>

@@ -16,15 +16,8 @@ export const useUserStore = defineStore('user', {
             this.user = user.user;
             localStorage.setItem('auth_user', JSON.stringify(user.user));
         },
-        async updateUserProfile(updatedUserProfile) {
-            try {
-                const response = await instance.patch(`users/${updatedUserProfile.id}`, updatedUserProfile);
-                console.log('Ответ сервера:', response.data);
-                const updatedUserData = await instance.get(`users/${updatedUserProfile.id}`);
-                this.setUser(updatedUserData.data);
-            } catch (error) {
-                console.error('Ошибка Axios:', error);
-            }
+        updateUserLocally(updatedUserData) {
+            this.setUser(updatedUserData);
         },
         clearToken() {
             this.token = null;
