@@ -11,77 +11,134 @@
         @submit.prevent="updateUserProfile"
         class="form-update"
     >
-      <a-form-item label="Фото" name="avatar">
+      <a-form-item name="avatar" class="custom-label">
         <a-upload
             :before-upload="beforeUpload"
             :show-upload-list="false"
             class="custom-upload"
         >
-          <a-avatar v-if="userInfo && userInfo.avatar" :src="userInfo.avatar" size="large" class="avatar"></a-avatar>
+          <a-avatar
+              v-if="userInfo && userInfo.avatar"
+              :src="userInfo.avatar"
+              size="large"
+              class="avatar"
+          ></a-avatar>
         </a-upload>
       </a-form-item>
 
       <a-form-item label="Фамилия" name="second_name">
-        <a-input class="second-name" v-if="userInfo && userInfo.second_name !== null" v-model:value="userInfo.second_name" />
+        <a-input
+            class="second-name"
+            v-model:value="userInfo.second_name"
+            :rules="[
+              { required: true, message: 'Пожалуйста, введите данные!' },
+
+            ]"
+        />
       </a-form-item>
       <a-form-item label="Имя" name="first_name">
-        <a-input class="first-name" v-if="userInfo && userInfo.first_name !== null" v-model:value="userInfo.first_name" />
+        <a-input
+            class="first-name"
+            v-if="userInfo && userInfo.first_name !== null"
+            v-model:value="userInfo.first_name"
+            :rules="[
+              { required: true, message: 'Пожалуйста, введите данные!' },
+              {
+                  validator: validateSecondName,
+              },
+            ]"
+        />
       </a-form-item>
       <a-form-item label="Отчество" name="last_name">
-        <a-input class="last-name" v-if="userInfo && userInfo.last_name !== null" v-model:value="userInfo.last_name" />
+        <a-input
+            class="last-name"
+            v-if="userInfo && userInfo.last_name !== null"
+            v-model:value="userInfo.last_name"
+            :rules="[
+              { required: true, message: 'Пожалуйста, введите данные!' },
+              {
+                  validator: validateSecondName,
+              },
+            ]"
+        />
       </a-form-item>
       <a-form-item label="Эл. почта" name="email">
-        <a-input class="last-name" v-if="userInfo && userInfo.email !== null" v-model:value="userInfo.email" />
+        <a-input
+            class="last-name"
+            v-if="userInfo && userInfo.email !== null"
+            v-model:value="userInfo.email"
+            :rules="[
+              { required: true, message: 'Пожалуйста, введите данные!' },
+              {
+                  validator: validateSecondName,
+              },
+            ]"
+        />
       </a-form-item>
       <a-form-item label="Статус" name="role_id">
-        <a-select class="user-select-name" v-if="userInfo && userInfo.role_id" v-model:value="userInfo.role_id">
-          <a-select-option  v-for="role in filteredRoles()" :key="role.id" :value="role.id">{{ newRoleName(role.role_name) }}</a-select-option>
+        <a-select
+            class="user-select-name"
+            v-if="userInfo && userInfo.role_id"
+            v-model:value="userInfo.role_id"
+        >
+          <a-select-option
+              v-for="role in filteredRoles()"
+              :key="role.id"
+              :value="role.id"
+          >{{ newRoleName(role.role_name) }}</a-select-option>
         </a-select>
       </a-form-item>
 
       <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-        <a-button type="primary" class="update-btn" html-type="submit" @click="updateUserProfile">Сохранить изменения</a-button>
+        <a-button
+            type="primary"
+            class="update-btn"
+            html-type="submit"
+        >
+          Сохранить изменения
+        </a-button>
       </a-form-item>
     </a-form>
   </div>
 </template>
 
 <script>
-import {instance} from "@/axios/axiosInstance";
-import {useUserStore} from "@/store/userStore";
-import {message} from "ant-design-vue";
+import { instance } from "@/axios/axiosInstance";
+import { useUserStore } from "@/store/userStore";
+import { message } from "ant-design-vue";
 
 export default {
   data() {
     return {
       roles: [],
-      file: null
+      file: null,
     };
   },
   methods: {
     beforeUpload(file) {
-      console.log('Загрузка фото:', file);
-      this.userInfo.avatar = file
+      console.log("Загрузка фото:", file);
+      this.file = file;
+      console.log("file:", this.file);
       return false;
     },
     async getUserRoles() {
       try {
-        const response = await instance.get('/roles');
+        const response = await instance.get("/roles");
         this.roles = response.data.roles;
-        console.log('Roles:', this.roles);
+        console.log("Roles:", this.roles);
       } catch (error) {
-        console.error('Error getting roles:', error);
+        console.error("Error getting roles:", error);
       }
     },
-    filteredRoles(){
-      return this.roles.filter(role => role.id !== 1);
+    filteredRoles() {
+      return this.roles.filter((role) => role.id !== 1);
     },
-    newRoleName(roleName){
-      switch (roleName){
-        case 'teacher':
-          return 'Учитель';
-        case 'student':
-          return 'Ученик';
+    newRoleName(roleName) {
+      switch (roleName) {
+        case "teacher":
+          return "Учитель";
+        case "student":
+          return "Ученик";
         default:
           return roleName;
       }
@@ -91,50 +148,60 @@ export default {
 
       try {
         const formData = new FormData();
-        formData.append('id', userStore.user.id);
 
-        // Вместо добавления this.file добавляем весь файл
-        if (this.userInfo.avatar) {
-          formData.append('avatar', this.userInfo.avatar);
+        if (this.file) {
+          formData.append("avatar", this.file, this.file.name);
         }
 
-        formData.append('second_name', this.userInfo.second_name || '');
-        formData.append('first_name', this.userInfo.first_name || '');
-        formData.append('last_name', this.userInfo.last_name || '');
-        formData.append('email', this.userInfo.email || '');
-        formData.append('role_id', this.userInfo.role_id || '');
+        formData.append("second_name", this.userInfo.second_name || "");
+        formData.append("first_name", this.userInfo.first_name);
+        formData.append("last_name", this.userInfo.last_name || "");
+        formData.append("email", this.userInfo.email || "");
+        formData.append("role_id", this.userInfo.role_id || "");
+        formData.append("_method", 'PATCH');
+
+
 
         // Отправляем запрос на сервер
-        const response = await instance.patch(`/users/${userStore.user.id}`, formData);
+        const response = await instance.post(
+            `/users/${userStore.user.id}`,
+            formData, {
+              headers:{
+                'Content-Type': 'multipart/form-data'
+              }
+            });
 
         // Проверяем формат ответа
-        console.log('Server Response:', response.data);
+        console.log("Server Response:", response.data);
 
         // Обновляем локальные данные пользователя на фронтенде только после успешного ответа от сервера
         if (response.data.user) {
           userStore.setUser(response.data.user);
-          console.log('Updated Locally:', userStore.user);
+          console.log("Updated Locally:", userStore.user);
         }
 
-        message.success('Профиль обновлен!');
+        message.success("Профиль обновлен!");
       } catch (error) {
-        console.error('Ошибка при обновлении профиля:', error);
+        console.error("Ошибка при обновлении профиля:", error);
       }
     },
   },
-  computed:{
-    userInfo(){
+  computed: {
+    userInfo() {
       const userInfo = useUserStore();
       return userInfo.user;
     },
   },
   mounted() {
     this.getUserRoles();
-  }
+  },
 };
 </script>
 
 <style scoped>
+.custom-label{
+  margin-left: 270px;
+}
 .account-container {
   text-align: center;
   background-color: #f5f5f5;
@@ -144,28 +211,28 @@ export default {
   height: 700px;
   margin-left: -30px;
 }
-.second-name{
+.second-name {
   padding-left: 150px;
   font-family: "Rubik", sans-serif;
 }
-.first-name{
+.first-name {
   padding-left: 150px;
   font-family: "Rubik", sans-serif;
 }
-.last-name{
+.last-name {
   padding-left: 150px;
   font-family: "Rubik", sans-serif;
 }
-.user-select-name{
+.user-select-name {
   font-family: "Rubik", sans-serif !important;
 }
-.form-update{
-  padding-right: 50px ;
+.form-update {
+  padding-right: 50px;
 }
 .account-title {
   font-family: "Rubik", sans-serif;
   font-size: 40px;
-  margin: 0 0 20px 70px;
+  margin: 0 0 20px 80px;
   color: #333;
 }
 
@@ -175,10 +242,10 @@ export default {
   cursor: pointer;
 }
 
-.update-btn{
+.update-btn {
   background-color: cadetblue;
 }
-.update-btn:hover{
+.update-btn:hover {
   background-color: cadetblue;
 }
 </style>
