@@ -29,6 +29,7 @@
       <a-form-item label="Фамилия" name="second_name">
         <a-input
             class="second-name"
+            v-if="userInfo && userInfo.second_name !== null"
             v-model:value="userInfo.second_name"
             :rules="[
               { required: true, message: 'Пожалуйста, введите данные!' },

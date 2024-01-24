@@ -5,8 +5,12 @@
       </div>
 
     <div class="navbar-btns">
-      <div class="user-courses" v-if="userId">
-        <a class="user-courses-link" href="#">Мои курсы</a>
+      <div class="teacher-courses" v-if="userRoleId === 2">
+        <button class="create-course-btn">Создать курс</button>
+        <a class="teacher-courses-link" href="#">Мои курсы</a>
+      </div>
+      <div class="student-courses" v-if="userRoleId === 3">
+        <a class="student-courses-link" href="#">Мои курсы</a>
       </div>
       <div class="user-initials" v-if="userAuth">
         <div class="user-icons" @click="navigateToUserPage()">
@@ -102,10 +106,6 @@ export default {
       }
   },
   computed:{
-    userId(){
-      const userStore = useUserStore();
-      return userStore.user ? userStore.user.id : null;
-    },
     userName(){
       const userStore = useUserStore();
       return userStore.user ? userStore.user.first_name : null;
@@ -124,6 +124,10 @@ export default {
     userEmail(){
       const userStore = useUserStore();
       return userStore.user ? userStore.user.email : null;
+    },
+    userRoleId(){
+      const userStore = useUserStore();
+      return userStore.user ? userStore.user.role_id : null;
     },
     userAvatar(){
       const userStore = useUserStore();
@@ -188,12 +192,9 @@ export default {
   color: white;
   border-color: white;
 }
-.user-initials{
-
-}
 .user-initials .user-photo {
   display: inline-block;
-  margin: 5px 0 0 450px;
+  margin: 6px 0 0 450px;
   width: 40px;
   height: 40px;
   line-height: 40px;
@@ -276,19 +277,42 @@ export default {
   cursor: pointer;
   font-size: 18px;
 }
-.user-courses{
-  margin: 15px 0 0 230px;
+.teacher-courses{
+  margin: 12px 0 0 230px;
 }
-.user-courses-link{
+.teacher-courses-link{
   font-family: "Rubik", sans-serif;
   color: white;
   text-decoration: none;
   cursor: pointer;
+  margin: 0 0 -3px 30px;
 }
-.user-courses-link:hover{
+.teacher-courses-link:hover{
+  color: white;
+}
+.student-courses{
+  margin: 14px 0 0 230px;
+}
+.student-courses-link{
+  font-family: "Rubik", sans-serif;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  margin: 0 0 -3px 30px;
+}
+.student-courses-link:hover{
   color: white;
 }
 .user-icons{
   margin-top: -33px;
+}
+.create-course-btn{
+  font-family: "Rubik", sans-serif;
+  margin-left: -80px;
+  color: black;
+  background-color: white;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
 }
 </style>
