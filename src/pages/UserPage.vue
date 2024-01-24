@@ -26,57 +26,63 @@
         </a-upload>
       </a-form-item>
 
-      <a-form-item label="Фамилия" name="second_name">
+      <a-form-item
+          label="Фамилия"
+          name="second_name"
+          :rules="[
+              { required: true, message: 'Пожалуйста, введите данные!' },
+              {validator: validateSecondName}
+          ]">
+
         <a-input
             class="second-name"
             v-if="userInfo && userInfo.second_name !== null"
             v-model:value="userInfo.second_name"
-            :rules="[
-              { required: true, message: 'Пожалуйста, введите данные!' },
-
-            ]"
         />
       </a-form-item>
-      <a-form-item label="Имя" name="first_name">
+      <a-form-item
+          label="Имя"
+          name="first_name"
+          :rules="[
+              { required: true, message: 'Пожалуйста, введите данные!' },
+              {
+                  validator: validateName,
+              },
+            ]">
         <a-input
             class="first-name"
             v-if="userInfo && userInfo.first_name !== null"
-            v-model:value="userInfo.first_name"
-            :rules="[
+            v-model:value="userInfo.first_name"/>
+      </a-form-item>
+      <a-form-item
+          label="Отчество"
+          name="last_name"
+          :rules="[
               { required: true, message: 'Пожалуйста, введите данные!' },
               {
-                  validator: validateSecondName,
+                  validator: validateLastName,
               },
-            ]"
-        />
-      </a-form-item>
-      <a-form-item label="Отчество" name="last_name">
+            ]">
         <a-input
             class="last-name"
             v-if="userInfo && userInfo.last_name !== null"
-            v-model:value="userInfo.last_name"
-            :rules="[
-              { required: true, message: 'Пожалуйста, введите данные!' },
-              {
-                  validator: validateSecondName,
-              },
-            ]"
-        />
+            v-model:value="userInfo.last_name"/>
       </a-form-item>
-      <a-form-item label="Эл. почта" name="email">
+      <a-form-item label="Эл. почта" name="email" :rules="[
+            { required: true, message: 'Пожалуйста, введите адрес электронной почты!' },
+            { type: 'email', message: 'Неверный формат электронной почты!' }
+        ]">
         <a-input
             class="last-name"
             v-if="userInfo && userInfo.email !== null"
-            v-model:value="userInfo.email"
-            :rules="[
-              { required: true, message: 'Пожалуйста, введите данные!' },
-              {
-                  validator: validateSecondName,
-              },
-            ]"
-        />
+            v-model:value="userInfo.email"/>
       </a-form-item>
-      <a-form-item label="Статус" name="role_id">
+      <a-form-item
+          label="Статус"
+          name="role_id"
+          :rules="[
+               { required: true, message: 'Пожалуйста, добавьте cтатус!' },
+           ]">
         <a-select
             class="user-select-name"
             v-if="userInfo && userInfo.role_id"
@@ -118,6 +124,7 @@ export default {
   methods: {
     beforeUpload(file) {
       console.log("Загрузка фото:", file);
+      this.userInfo.avatar = URL.createObjectURL(file);
       this.file = file;
       console.log("file:", this.file);
       return false;
@@ -162,8 +169,6 @@ export default {
         formData.append("_method", 'PATCH');
 
 
-
-        // Отправляем запрос на сервер
         const response = await instance.post(
             `/users/${userStore.user.id}`,
             formData, {
@@ -186,6 +191,54 @@ export default {
         console.error("Ошибка при обновлении профиля:", error);
       }
     },
+    validateName(rule, value) {
+      return new Promise((resolve, reject) => {
+        if (value){
+          const containsDigits = /\d/.test(value);
+
+          if (containsDigits) {
+            reject('Имя не должно содержать цифры!');
+          } else {
+            resolve();
+          }
+
+        } else {
+          resolve();
+        }
+      });
+    },
+    validateSecondName(rule, value) {
+      return new Promise((resolve, reject) => {
+        if (value){
+          const containsDigits = /\d/.test(value);
+
+          if (containsDigits) {
+            reject('Фамилия не должна содержать цифры!');
+          } else {
+            resolve();
+          }
+
+        } else {
+          resolve();
+        }
+      });
+    },
+    validateLastName(rule, value) {
+      return new Promise((resolve, reject) => {
+        if (value){
+          const containsDigits = /\d/.test(value);
+
+          if (containsDigits) {
+            reject('Отчество не должно содержать цифры!');
+          } else {
+            resolve();
+          }
+
+        } else {
+          resolve();
+        }
+      });
+    },
   },
   computed: {
     userInfo() {
@@ -202,6 +255,9 @@ export default {
 <style scoped>
 .custom-label{
   margin-left: 270px;
+}
+.role_id{
+  font-family: "Rubick", sans-serif !important;
 }
 .account-container {
   text-align: center;
