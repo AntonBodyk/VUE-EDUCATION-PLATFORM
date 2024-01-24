@@ -1,9 +1,22 @@
 <template>
   <div class="navbar">
-      <div>
+      <div class="navbar-items">
           <h1>SmartLearn</h1>
       </div>
-
+    <div class="navbar-categories">
+      <a-dropdown :trigger="['click']">
+        <a class="ant-dropdown-link" @click.prevent>
+          Категории
+        </a>
+        <template #overlay>
+          <a-menu>
+            <a-menu-item v-for="category in categories" key="{{category.id}}">
+              <a href="#">{{category.category_name}}</a>
+            </a-menu-item>
+          </a-menu>
+        </template>
+      </a-dropdown>
+    </div>
     <div class="navbar-btns">
       <div class="teacher-courses" v-if="userRoleId === 2">
         <button class="create-course-btn">Создать курс</button>
@@ -57,11 +70,11 @@ export default {
   data(){
     return{
       showInfoBlock: false,
+      categories: []
     }
   },
   methods:{
       showUserInfo(){
-        console.log('Mouse over');
         this.showInfoBlock = true;
       },
       closeUserInfo() {
@@ -103,7 +116,14 @@ export default {
         }catch (error){
             message.error('Ошибка сервера', error);
         }
-      }
+      },
+    async getCourseCaregories(){
+        const categoriesResponse = await instance.get('/categories');
+        this.categories = categoriesResponse.data.categories;
+    }
+  },
+  mounted() {
+    this.getCourseCaregories();
   },
   computed:{
     userName(){
@@ -160,10 +180,9 @@ export default {
 
 
 <style scoped>
-
 .navbar{
     height: 50px;
-    background-color: darkslategray;
+    background-color: #364d79;
     box-shadow: 2px 2px 4px grey;
     display: flex;
 }
@@ -173,8 +192,15 @@ export default {
   color: aliceblue;
   padding-left: 50px;
 }
+.navbar-categories{
+  font-family: "Rubik", sans-serif;
+  color: white;
+  width: 80px;
+  margin: 17px 0 0 40px;
+  cursor: pointer;
+}
 .navbar-btns{
-  margin-left: 40%;
+  margin-left: 31%;
 }
 .registration-btn{
   background-color: black;
@@ -229,6 +255,7 @@ export default {
   border: 1px solid grey;
   padding: 5px;
   overflow: hidden;
+  z-index: 3;
 }
 
 .user-info-avatar {
@@ -252,7 +279,7 @@ export default {
   cursor: pointer;
 }
 .user-name:hover{
-  color: cadetblue;
+  color: #364d79;
 }
 .exit-button{
   color: white;

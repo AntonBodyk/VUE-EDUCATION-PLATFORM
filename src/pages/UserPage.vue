@@ -244,9 +244,9 @@ export default {
 }
 
 .update-btn {
-  background-color: cadetblue;
+  background-color: #364d79;
 }
 .update-btn:hover {
-  background-color: cadetblue;
+  background-color: #364d79;
 }
 </style>

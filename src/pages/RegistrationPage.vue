@@ -8,7 +8,7 @@
         :label-col="{ span: 8 }"
         :wrapper-col="{ span: 16 }"
         autocomplete="off"
-        style="width: 600px; margin: 100px 0 0 25%;"
+        style="width: 600px; margin: 50px 0 0 25%;"
         @submit.prevent="registrationUser"
     >
       <a-form-item
@@ -304,15 +304,15 @@ h1{
   margin-top: 50px;
   margin-left: 34%;
   font-size: 40px;
-  color: darkcyan;
+  color: #364d79;
 }
 .has-error{
   border-color: red;
 }
 .register-btn{
-  background-color: cadetblue;
+  background-color: #364d79;
 }
 .register-btn:hover{
-  background-color: cadetblue;
+  background-color: #364d79;
 }
 </style>

@@ -110,20 +110,20 @@ export default {
 h1{
   margin: 50px 0 0 43%;
   font-size: 40px;
-  color: darkcyan;
+  color: #364d79;
 }
 .registration{
   margin: 50px 0 0 43%;
 }
 .registration a{
-  color: cadetblue;
+  color: #364d79;
   text-decoration: none;
 }
 
 .sign-btn{
-  background-color: cadetblue;
+  background-color: #364d79;
 }
 .sign-btn:hover {
-  background-color: cadetblue;
+  background-color: #364d79;
 }
 </style>
