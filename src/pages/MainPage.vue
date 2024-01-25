@@ -19,6 +19,11 @@
         <li><img src="../../public/images/partnes-images/ericsson.svg" alt="Упс..."></li>
       </ul>
     </div>
+    <div class="main-courses-container">
+        <h2>Большой выбор курсов</h2>
+        <p>Выбирайте из более чем 1000 онлайн-видеокурсов; новые курсы добавляются на сайт каждый месяц</p>
+        <CourseList/>
+    </div>
   </main>
   <footer>
     <div class="footer-section">
@@ -56,8 +61,11 @@
 
 
 <script>
+import CourseList from "@/components/CourseList.vue";
 export default {
-
+  components:{
+      CourseList
+  }
 }
 </script>
 
@@ -134,4 +142,16 @@ export default {
   font-family: "Rubik", sans-serif;
   margin: 5px 0 0 73%;
 }
+.main-courses-container{
+  font-family: "Rubik", sans-serif;
+  margin-top: 30px;
+}
+.main-courses-container h2{
+  font-size: 30px;
+  text-align: center;
+}
+.main-courses-container p{
+  text-align: center;
+}
+
 </style>
