@@ -113,7 +113,7 @@ h1{
   color: #364d79;
 }
 .registration{
-  margin: 50px 0 0 43%;
+  margin: 50px 0 50px 43%;
 }
 .registration a{
   color: #364d79;

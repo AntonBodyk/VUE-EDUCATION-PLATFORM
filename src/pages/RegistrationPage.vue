@@ -311,6 +311,7 @@ h1{
 }
 .register-btn{
   background-color: #364d79;
+  margin-bottom: 40px;
 }
 .register-btn:hover{
   background-color: #364d79;

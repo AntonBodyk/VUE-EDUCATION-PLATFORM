@@ -1,36 +1,32 @@
 <template>
-  <div>
-    <div class="course-list" v-for="row in visibleCourseRows" :key="row[0].id">
+  <div class="authored-courses">
+    <h1>Мои курсы:</h1>
+    <div class="teacher-courses" v-for="row in visibleCourseRows" :key="row[0].id">
       <div class="course" v-for="course in row" :key="course.id">
         <img :src="course.course_img_url" alt="Sorry...">
         <h4>{{ course.title }}</h4>
         <span class="course-author">Автор: {{ course.author.second_name }} {{ course.author.first_name }} {{ course.author.last_name }}</span>
-        <div class="course-price">{{course.course_price}}$</div>
       </div>
     </div>
     <a-space wrap>
-      <a-button class="load-more-btn" type="primary" @click="loadMoreCourses" v-if="visibleCourseRows.length * coursesPerRow < coursesStore.courses.length">Еще</a-button>
+      <a-button class="load-more-btn" type="primary" @click="loadMoreCourses" v-if="visibleCourseRows.length * coursesPerRow < coursesStore.authorCourses.length">Еще</a-button>
     </a-space>
   </div>
 </template>
 
 
+
 <script>
-import {instance} from "@/axios/axiosInstance";
 import {useCoursesStore} from "@/store/courseStore";
 export default {
   data(){
-      return{
-        coursesStore: useCoursesStore(),
-        coursesPerRow: 5,
-        visibleCoursesCount: 15,
-      }
+    return{
+      coursesPerRow: 5,
+      visibleCoursesCount: 15,
+      coursesStore: useCoursesStore(),
+    }
   },
-  methods: {
-    async getCourses(){
-      const coursesResponse = await instance.get('/courses');
-      this.coursesStore.setCourses(coursesResponse.data.data);
-    },
+  methods:{
     loadMoreCourses() {
       this.visibleCoursesCount += 15;
     },
@@ -42,22 +38,24 @@ export default {
       return result;
     },
   },
-  computed: {
+  computed:{
     visibleCourseRows() {
-      const courses = this.coursesStore.courses || [];
+      const courses = this.coursesStore.authorCourses || [];
       const visibleCourses = courses.slice(0, this.visibleCoursesCount);
       return this.chunkArray(visibleCourses, this.coursesPerRow);
     },
-  },
-  mounted() {
-    this.getCourses();
   }
 }
 </script>
 
 
 <style scoped>
-.course-list{
+.authored-courses h1{
+  font-family: "Rubik", sans-serif;
+  font-weight: bold;
+  margin: 20px 0 0 90px;
+}
+.teacher-courses{
   display: flex;
   flex-wrap: wrap;
   margin: 20px 0 20px 70px;
@@ -72,6 +70,10 @@ export default {
 .course h4{
   margin-top: 10px;
 }
+.course-author{
+  color: grey;
+  font-size: 12px;
+}
 .load-more-btn{
   background-color: #364d79;
   font-family: "Rubik", sans-serif;
@@ -82,13 +84,5 @@ export default {
 .load-more-btn:hover{
   background-color: azure;
   color: black;
-}
-.course-author{
-  color: grey;
-  font-size: 12px;
-}
-.course-price{
-  font-weight: bold;
-  margin-top: 10px;
 }
 </style>

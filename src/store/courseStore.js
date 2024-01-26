@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia';
 
-export const useCoursesStore = defineStore({
+export const useCoursesStore = defineStore( 'course', {
     state: () => ({
         courses: [],
+        authUser: JSON.parse(localStorage.getItem('auth_user')) || null
     }),
     actions: {
-        setCourses(newCourse) {
-            this.courses = newCourse;
+        setCourses(courses) {
+            this.courses = courses;
         },
         addCourse(newCourse) {
             this.courses.push(newCourse);
@@ -16,6 +17,11 @@ export const useCoursesStore = defineStore({
             if (index !== -1) {
                 this.courses.splice(index, 1);
             }
+        },
+    },
+    getters:{
+        authorCourses(state){
+            return state.courses.filter(course => course.author_id === state.authUser.id);
         },
     },
 });

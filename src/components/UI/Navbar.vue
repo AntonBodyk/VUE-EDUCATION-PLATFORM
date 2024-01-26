@@ -10,7 +10,7 @@
         </a>
         <template #overlay>
           <a-menu>
-            <a-menu-item v-for="category in categories" key="{{category.id}}">
+            <a-menu-item v-for="category in categories" key="{{category.id}}" class="category-name">
               <a href="#">{{category.category_name}}</a>
             </a-menu-item>
           </a-menu>
@@ -19,16 +19,16 @@
     </div>
     <div class="navbar-btns">
       <div class="teacher-courses" v-if="userRoleId === 2">
-        <button class="create-course-btn">Создать курс</button>
-        <a class="teacher-courses-link" href="#">Мои курсы</a>
+        <a class="create-course-link">Создать курс</a>
+        <a class="teacher-courses-link" @click="navigateToMyCoursesPage()">Мои курсы</a>
       </div>
       <div class="student-courses" v-if="userRoleId === 3">
-        <a class="student-courses-link" href="#">Мои курсы</a>
+        <a class="student-courses-link" href="#">Моё обучение</a>
       </div>
       <div class="user-initials" v-if="userAuth">
-        <div class="user-icons" @click="navigateToUserPage()">
-          <img v-if="userAvatar && userAvatar.length > 0" :src="userAvatar" class="user-photo" alt="User Avatar" @mouseover="showUserInfo" />
-          <div v-else class="user-avatar" @mouseover="showUserInfo" >{{ userAvatar && userAvatar.length > 0 ? '' : userInitials }} </div>
+        <div class="user-icons">
+          <img v-if="userAvatar && userAvatar.length > 0" :src="userAvatar" @click="navigateToUserPage()" class="user-photo" alt="User Avatar" @mouseover="showUserInfo" />
+          <div v-else class="user-avatar" @mouseover="showUserInfo" @click="navigateToUserPage()" >{{ userAvatar && userAvatar.length > 0 ? '' : userInitials }} </div>
         </div>
 
         <a-space wrap>
@@ -87,7 +87,14 @@ export default {
         if (localStorage.getItem('auth_user') && localStorage.getItem('auth_token') !== null) {
           const userStore = useUserStore();
           const userId = userStore.user ? userStore.user.id : null;
-          router.push(`/${userId}`);
+          router.push(`/users/${userId}`);
+        }
+      },
+      navigateToMyCoursesPage(){
+        if (localStorage.getItem('auth_user') && localStorage.getItem('auth_token') !== null) {
+          const userStore = useUserStore();
+          const userId = userStore.user ? userStore.user.id : null;
+          router.push(`/users/${userId}/courses`);
         }
       },
       async logoutUser(){
@@ -218,6 +225,10 @@ export default {
   color: white;
   border-color: white;
 }
+.user-initials{
+  width: 40px;
+  height: 40px;
+}
 .user-initials .user-photo {
   display: inline-block;
   margin: 6px 0 0 450px;
@@ -257,7 +268,10 @@ export default {
   overflow: hidden;
   z-index: 3;
 }
-
+.user-photo{
+  width: 40px;
+  height: 40px;
+}
 .user-info-avatar {
   width: 40px;
   height: 40px;
@@ -305,14 +319,13 @@ export default {
   font-size: 18px;
 }
 .teacher-courses{
-  margin: 12px 0 0 230px;
+  margin: 14px 0 0 150px;
 }
 .teacher-courses-link{
   font-family: "Rubik", sans-serif;
   color: white;
   text-decoration: none;
   cursor: pointer;
-  margin: 0 0 -3px 30px;
 }
 .teacher-courses-link:hover{
   color: white;
@@ -333,13 +346,14 @@ export default {
 .user-icons{
   margin-top: -33px;
 }
-.create-course-btn{
+.create-course-link{
   font-family: "Rubik", sans-serif;
-  margin-left: -80px;
-  color: black;
-  background-color: white;
-  border-radius: 5px;
-  border: none;
+  color: white;
+  text-decoration: none;
   cursor: pointer;
+  margin-right: 40px;
+}
+.category-name:hover{
+  color: aqua;
 }
 </style>
