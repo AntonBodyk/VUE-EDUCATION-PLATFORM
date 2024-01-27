@@ -17,6 +17,17 @@
         </template>
       </a-dropdown>
     </div>
+      <a-space direction="vertical">
+        <a-input-search
+            name="searchQuery"
+            class="search-courses"
+            v-model:value="searchValue"
+            placeholder="Поиск курсов"
+            enter-button
+            @search="onSearch"
+        />
+      </a-space>
+
     <div class="navbar-btns">
       <div class="teacher-courses" v-if="userRoleId === 2">
         <a class="create-course-link">Создать курс</a>
@@ -64,16 +75,36 @@
 import {instance} from "@/axios/axiosInstance";
 import {message} from "ant-design-vue";
 import {useUserStore} from "@/store/userStore";
+import {useCoursesStore} from "@/store/courseStore";
 import router from "@/routes/router";
 
 export default {
   data(){
     return{
       showInfoBlock: false,
-      categories: []
+      categories: [],
+      searchValue: '',
+      userStore: useUserStore(),
+      courseStore: useCoursesStore()
     }
   },
   methods:{
+      onSearch(){
+        console.log("Search Query:", this.searchValue);
+        this.courseStore.searchQuery = this.searchValue.trim();
+        if (this.searchValue === '') {
+          // Если поисковая строка пуста, восстанавливаем исходный массив курсов
+          this.courseStore.resetCoursesArray();
+        } else {
+          // Фильтруем оригинальный массив и сохраняем результат в хранилище
+          const filteredCourses = this.courseStore.courses.filter(course =>
+              course.title.toLowerCase().includes(this.courseStore.searchQuery.toLowerCase())
+          );
+
+          // Обновляем курсы в хранилище с отфильтрованными результатами
+          this.courseStore.setCourses(filteredCourses);
+        }
+      },
       showUserInfo(){
         this.showInfoBlock = true;
       },
@@ -85,20 +116,17 @@ export default {
       },
       navigateToUserPage(){
         if (localStorage.getItem('auth_user') && localStorage.getItem('auth_token') !== null) {
-          const userStore = useUserStore();
-          const userId = userStore.user ? userStore.user.id : null;
+          const userId = this.userStore.user ? this.userStore.user.id : null;
           router.push(`/users/${userId}`);
         }
       },
       navigateToMyCoursesPage(){
         if (localStorage.getItem('auth_user') && localStorage.getItem('auth_token') !== null) {
-          const userStore = useUserStore();
-          const userId = userStore.user ? userStore.user.id : null;
+          const userId = this.userStore.user ? this.userStore.user.id : null;
           router.push(`/users/${userId}/courses`);
         }
       },
       async logoutUser(){
-        const userStore = useUserStore();
         const accessToken = localStorage.getItem('auth_token');
         const config = {
           headers: {
@@ -111,8 +139,8 @@ export default {
 
           if(logoutResponse.status === 200){
 
-            userStore.clearToken();
-            userStore.clearAuthUser();
+            this.userStore.clearToken();
+            this.userStore.clearAuthUser();
 
             message.success('Вы вышли с аккаунта');
             router.push('/');
@@ -134,40 +162,32 @@ export default {
   },
   computed:{
     userName(){
-      const userStore = useUserStore();
-      return userStore.user ? userStore.user.first_name : null;
+      return this.userStore.user ? this.userStore.user.first_name : null;
     },
     userSecondName(){
-      const userStore = useUserStore();
-      return userStore.user ? userStore.user.second_name : null;
+      return this.userStore.user ? this.userStore.user.second_name : null;
     },
     userLastName(){
-      const userStore = useUserStore();
-      return userStore.user ? userStore.user.last_name : null;
+      return this.userStore.user ? this.userStore.user.last_name : null;
     },
     combinedName(){
       return this.userName + ' ' + this.userLastName;
     },
     userEmail(){
-      const userStore = useUserStore();
-      return userStore.user ? userStore.user.email : null;
+      return this.userStore.user ? this.userStore.user.email : null;
     },
     userRoleId(){
-      const userStore = useUserStore();
-      return userStore.user ? userStore.user.role_id : null;
+      return this.userStore.user ? this.userStore.user.role_id : null;
     },
     userAvatar(){
-      const userStore = useUserStore();
-      return userStore.user ? userStore.user.avatar : null;
+      return this.userStore.user ? this.userStore.user.avatar : null;
     },
     userAuth(){
-      const auth = useUserStore();
-      return auth.token !== null;
+      return this.userStore.token !== null;
     },
     userInitials() {
-      const userStore = useUserStore();
-      const userName = userStore.user ? userStore.user.first_name : null;
-      const lastName = userStore.user ? userStore.user.last_name : null;
+      const userName = this.userStore.user ? this.userStore.user.first_name : null;
+      const lastName = this.userStore.user ? this.userStore.user.last_name : null;
 
       const combinedName = userName + ' ' + lastName;
 
@@ -207,7 +227,7 @@ export default {
   cursor: pointer;
 }
 .navbar-btns{
-  margin-left: 31%;
+  margin-left: 0;
 }
 .registration-btn{
   background-color: black;
@@ -356,4 +376,11 @@ export default {
 .category-name:hover{
   color: aqua;
 }
+.search-courses{
+  width: 350px;
+  height: 30px;
+  margin: 10px 0 0 100px;
+  font-family: "Rubik", sans-serif;
+}
+
 </style>

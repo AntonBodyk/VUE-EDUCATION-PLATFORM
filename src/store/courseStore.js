@@ -3,7 +3,8 @@ import { defineStore } from 'pinia';
 export const useCoursesStore = defineStore( 'course', {
     state: () => ({
         courses: [],
-        authUser: JSON.parse(localStorage.getItem('auth_user')) || null
+        authUser: JSON.parse(localStorage.getItem('auth_user')) || null,
+        searchQuery: '',
     }),
     actions: {
         setCourses(courses) {
@@ -18,10 +19,13 @@ export const useCoursesStore = defineStore( 'course', {
                 this.courses.splice(index, 1);
             }
         },
+        resetCoursesArray(){
+            this.courses = [...this.courses];
+        }
     },
     getters:{
         authorCourses(state){
             return state.courses.filter(course => course.author_id === state.authUser.id);
-        },
+        }
     },
 });
