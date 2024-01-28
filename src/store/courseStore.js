@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import {instance} from "@/axios/axiosInstance";
 
 export const useCoursesStore = defineStore( 'course', {
     state: () => ({
@@ -10,6 +11,21 @@ export const useCoursesStore = defineStore( 'course', {
         setCourses(courses) {
             this.courses = courses;
         },
+        async getCourses(){
+            const coursesResponse = await instance.get('/courses');
+            this.setCourses(coursesResponse.data.data);
+        },
+        async searchCourses(query) {
+            try {
+                const response = await instance.get('/courses/search', {
+                    params: {query: query},
+                });
+                this.setCourses(response.data.data);
+            } catch (error) {
+                console.error('Ошибка при выполнении поиска курсов:', error);
+                this.setCourses([]); // Возвращаем пустой массив в случае ошибки
+            }
+        },
         addCourse(newCourse) {
             this.courses.push(newCourse);
         },
@@ -18,9 +34,6 @@ export const useCoursesStore = defineStore( 'course', {
             if (index !== -1) {
                 this.courses.splice(index, 1);
             }
-        },
-        resetCoursesArray(){
-            this.courses = [...this.courses];
         }
     },
     getters:{

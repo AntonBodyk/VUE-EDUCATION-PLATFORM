@@ -89,20 +89,13 @@ export default {
     }
   },
   methods:{
-      onSearch(){
+      async onSearch(){
         console.log("Search Query:", this.searchValue);
         this.courseStore.searchQuery = this.searchValue.trim();
-        if (this.searchValue === '') {
-          // Если поисковая строка пуста, восстанавливаем исходный массив курсов
-          this.courseStore.resetCoursesArray();
-        } else {
-          // Фильтруем оригинальный массив и сохраняем результат в хранилище
-          const filteredCourses = this.courseStore.courses.filter(course =>
-              course.title.toLowerCase().includes(this.courseStore.searchQuery.toLowerCase())
-          );
-
-          // Обновляем курсы в хранилище с отфильтрованными результатами
-          this.courseStore.setCourses(filteredCourses);
+        try {
+          await this.courseStore.searchCourses(this.courseStore.searchQuery);
+        } catch (e) {
+          console.error('Ошибка при выполнении поиска:', e);
         }
       },
       showUserInfo(){

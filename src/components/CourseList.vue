@@ -9,7 +9,7 @@
       </div>
     </div>
     <a-space wrap>
-      <a-button class="load-more-btn" type="primary" @click="loadMoreCourses" v-if="visibleCourseRows.length * coursesPerRow < coursesStore.courses.length">Еще</a-button>
+      <a-button class="load-more-btn" type="primary" @click="loadMoreCourses" v-if="shouldShowLoadMoreButton">Еще</a-button>
     </a-space>
   </div>
 </template>
@@ -27,10 +27,6 @@ export default {
       }
   },
   methods: {
-    async getCourses(){
-      const coursesResponse = await instance.get('/courses');
-      this.coursesStore.setCourses(coursesResponse.data.data);
-    },
     loadMoreCourses() {
       this.visibleCoursesCount += 15;
     },
@@ -48,9 +44,14 @@ export default {
       const visibleCourses = courses.slice(0, this.visibleCoursesCount);
       return this.chunkArray(visibleCourses, this.coursesPerRow);
     },
+    shouldShowLoadMoreButton() {
+      return (
+          this.visibleCourseRows.length * this.coursesPerRow < (this.coursesStore.courses ? this.coursesStore.courses.length : 0)
+      );
+    },
   },
   mounted() {
-    this.getCourses();
+    this.coursesStore.getCourses();
   }
 }
 </script>
