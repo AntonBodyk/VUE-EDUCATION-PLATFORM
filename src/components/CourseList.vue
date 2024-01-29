@@ -1,4 +1,7 @@
 <template>
+  <div class="courses-list-empty" v-if="this.coursesStore.courses.length <= 0">
+    <h2 class="courses-list-empty-title">Курсов нет!</h2>
+  </div>
   <div>
     <div class="course-list" v-for="row in visibleCourseRows" :key="row[0].id">
       <div class="course" v-for="course in row" :key="course.id">
@@ -91,5 +94,10 @@ export default {
 .course-price{
   font-weight: bold;
   margin-top: 10px;
+}
+.courses-list-empty-title{
+  text-align: center;
+  margin-top: 20px;
+  color: red;
 }
 </style>

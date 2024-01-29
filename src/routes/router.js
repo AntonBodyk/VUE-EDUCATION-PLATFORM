@@ -5,6 +5,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import MainPage from "@/pages/MainPage.vue";
 import UserPage from "@/pages/UserPage.vue";
 import MyCourses from "@/pages/MyCourses.vue";
+import CategoryCoursesPage from "@/pages/CategoryCoursesPage.vue";
 
 
 
@@ -29,6 +30,10 @@ const routes = [
         path: '/users/:id/courses',
         component: MyCourses
     },
+    {
+        path: '/categories/:id',
+        component: CategoryCoursesPage
+    }
 
 ];
 

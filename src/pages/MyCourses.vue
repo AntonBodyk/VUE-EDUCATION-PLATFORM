@@ -1,6 +1,9 @@
 <template>
   <div class="authored-courses">
     <h1>Мои курсы:</h1>
+    <div class="courses-list-empty" v-if="this.coursesStore.courses.length <= 0">
+      <h2 class="courses-list-empty-title">У Вас нет таких курсов!</h2>
+    </div>
     <div class="teacher-courses" v-for="row in visibleCourseRows" :key="row[0].id">
       <div class="course" v-for="course in row" :key="course.id">
         <img :src="course.course_img_url" alt="Sorry...">
@@ -84,5 +87,9 @@ export default {
 .load-more-btn:hover{
   background-color: azure;
   color: black;
+}
+.courses-list-empty-title{
+  margin: 20px 0 0 90px;
+  color: red;
 }
 </style>

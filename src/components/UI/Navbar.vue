@@ -9,9 +9,9 @@
           Категории
         </a>
         <template #overlay>
-          <a-menu>
-            <a-menu-item v-for="category in categories" key="{{category.id}}" class="category-name">
-              <a href="#">{{category.category_name}}</a>
+          <a-menu class="drop-category">
+            <a-menu-item v-for="category in categories" :key="category.id" class="category-name">
+              <a href="#" @click="navigateToCategoriesPage(category.id)">{{category.category_name}}</a>
             </a-menu-item>
           </a-menu>
         </template>
@@ -119,6 +119,9 @@ export default {
           router.push(`/users/${userId}/courses`);
         }
       },
+      async navigateToCategoriesPage(categoryId){
+          router.push(`/categories/${categoryId}`);
+      },
       async logoutUser(){
         const accessToken = localStorage.getItem('auth_token');
         const config = {
@@ -200,6 +203,9 @@ export default {
 
 
 <style scoped>
+.drop-category{
+  margin-top: 20px;
+}
 .navbar{
     height: 50px;
     background-color: #364d79;
@@ -375,5 +381,7 @@ export default {
   margin: 10px 0 0 100px;
   font-family: "Rubik", sans-serif;
 }
-
+.ant-input-search-button{
+  color: #364d79;
+}
 </style>

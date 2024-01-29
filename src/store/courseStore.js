@@ -18,12 +18,12 @@ export const useCoursesStore = defineStore( 'course', {
         async searchCourses(query) {
             try {
                 const response = await instance.get('/courses/search', {
-                    params: {query: query},
+                    params: {searchQuery: query},
                 });
                 this.setCourses(response.data.data);
             } catch (error) {
                 console.error('Ошибка при выполнении поиска курсов:', error);
-                this.setCourses([]); // Возвращаем пустой массив в случае ошибки
+                this.setCourses([]);
             }
         },
         addCourse(newCourse) {
@@ -39,6 +39,6 @@ export const useCoursesStore = defineStore( 'course', {
     getters:{
         authorCourses(state){
             return state.courses.filter(course => course.author_id === state.authUser.id);
-        }
+        },
     },
 });
