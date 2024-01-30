@@ -4,12 +4,16 @@ import {instance} from "@/axios/axiosInstance";
 export const useCoursesStore = defineStore( 'course', {
     state: () => ({
         courses: [],
+        categoryCourses: [],
         authUser: JSON.parse(localStorage.getItem('auth_user')) || null,
         searchQuery: '',
     }),
     actions: {
         setCourses(courses) {
             this.courses = courses;
+        },
+        setCategoryCourses(categoryCourses){
+            this.categoryCourses = categoryCourses;
         },
         async getCourses(){
             const coursesResponse = await instance.get('/courses');
@@ -21,6 +25,7 @@ export const useCoursesStore = defineStore( 'course', {
                     params: {searchQuery: query},
                 });
                 this.setCourses(response.data.data);
+                this.setCategoryCourses(response.data.data);
             } catch (error) {
                 console.error('Ошибка при выполнении поиска курсов:', error);
                 this.setCourses([]);
@@ -39,6 +44,6 @@ export const useCoursesStore = defineStore( 'course', {
     getters:{
         authorCourses(state){
             return state.courses.filter(course => course.author_id === state.authUser.id);
-        },
+        }
     },
 });

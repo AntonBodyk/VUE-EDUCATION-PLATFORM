@@ -30,7 +30,7 @@
 
     <div class="navbar-btns">
       <div class="teacher-courses" v-if="userRoleId === 2">
-        <a class="create-course-link">Создать курс</a>
+        <router-link to="/new-course" class="create-course-link">Создать курс</router-link>
         <a class="teacher-courses-link" @click="navigateToMyCoursesPage()">Мои курсы</a>
       </div>
       <div class="student-courses" v-if="userRoleId === 3">
@@ -120,7 +120,10 @@ export default {
         }
       },
       async navigateToCategoriesPage(categoryId){
-          router.push(`/categories/${categoryId}`);
+        const response = await instance.get(`/categories/${categoryId}/courses`);
+        this.categoryCourse = response.data.data;
+        console.log(this.categoryCourse);
+        router.push(`/categories/${categoryId}`);
       },
       async logoutUser(){
         const accessToken = localStorage.getItem('auth_token');

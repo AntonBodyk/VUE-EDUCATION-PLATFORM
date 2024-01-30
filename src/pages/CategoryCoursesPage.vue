@@ -1,7 +1,7 @@
 <template>
     <div class="category-page">
-      <h1>Курсы в категории ""</h1>
-      <div class="courses-list-empty" v-if="this.coursesStore.courses.length <= 0">
+      <h1>Курсы в категории "{{currentCategoryName}}"</h1>
+      <div class="courses-list-empty" v-if="coursesStore.categoryCourses.length <= 0">
         <h2 class="courses-list-empty-title">У Вас нет таких курсов!</h2>
       </div>
       <div class="category-courses" v-for="row in visibleCourseRows" :key="row[0].id">
@@ -13,7 +13,7 @@
         </div>
       </div>
       <a-space wrap>
-        <a-button class="load-more-btn" type="primary" @click="loadMoreCourses" v-if="visibleCourseRows.length * coursesPerRow < categoryCourse.length">Еще</a-button>
+        <a-button class="load-more-btn" type="primary" @click="loadMoreCourses" v-if="visibleCourseRows.length * coursesPerRow < coursesStore.categoryCourses.length">Еще</a-button>
       </a-space>
     </div>
 
@@ -25,6 +25,7 @@
 <script>
 
 import {useCoursesStore} from "@/store/courseStore";
+import {instance} from "@/axios/axiosInstance";
 
 export default {
   data(){
@@ -33,18 +34,22 @@ export default {
       categoryCourse: [],
       coursesPerRow: 5,
       visibleCoursesCount: 15,
+      currentCategoryName: ''
     }
   },
   methods: {
-    getCoursesByCategory() {
-      const categoryId = Number(this.$route.params.id);
+      async getCoursesByCategory() {
+        const categoryId = this.$route.params.id;
+        try {
+          const categoryCoursesResponse = await instance.get(`/categories/${categoryId}/courses`);
+          this.coursesStore.setCategoryCourses(categoryCoursesResponse.data.data);
 
-      this.categoryCourse = this.coursesStore.courses.filter(course => {
-        return course.category_id === categoryId;
-      });
-
-      console.log('Filtered Courses:', this.categoryCourse);
-    },
+          const categoryNameResponse = await instance.get(`/categories/${categoryId}`);
+          this.currentCategoryName = categoryNameResponse.data.name;
+        } catch (error) {
+          console.error('Ошибка при получении курсов:', error);
+        }
+      },
       loadMoreCourses() {
         this.visibleCoursesCount += 15;
       },
@@ -58,9 +63,16 @@ export default {
   },
   computed:{
     visibleCourseRows() {
-      const courses = this.categoryCourse || [];
+      const courses = Array.isArray(this.coursesStore.categoryCourses) ? this.coursesStore.categoryCourses : [];
       const visibleCourses = courses.slice(0, this.visibleCoursesCount);
       return this.chunkArray(visibleCourses, this.coursesPerRow);
+    },
+  },
+  watch: {
+    $route(to, from) {
+      if (to.params.id !== from.params.id) {
+        this.getCoursesByCategory();
+      }
     },
   },
   mounted() {
@@ -70,8 +82,10 @@ export default {
 </script>
 
 <style scoped>
-.authored-courses h1{
+.category-page{
   font-family: "Rubik", sans-serif;
+}
+.category-page h1{
   font-weight: bold;
   margin: 20px 0 0 90px;
 }

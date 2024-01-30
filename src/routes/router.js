@@ -6,6 +6,7 @@ import MainPage from "@/pages/MainPage.vue";
 import UserPage from "@/pages/UserPage.vue";
 import MyCourses from "@/pages/MyCourses.vue";
 import CategoryCoursesPage from "@/pages/CategoryCoursesPage.vue";
+import NewCoursePage from "@/pages/NewCoursePage.vue";
 
 
 
@@ -32,7 +33,11 @@ const routes = [
     },
     {
         path: '/categories/:id',
-        component: CategoryCoursesPage
+        component: CategoryCoursesPage,
+    },
+    {
+        path: '/new-course',
+        component: NewCoursePage
     }
 
 ];

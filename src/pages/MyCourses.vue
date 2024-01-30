@@ -53,6 +53,9 @@ export default {
 
 
 <style scoped>
+.authored-courses{
+  font-family: "Rubik", sans-serif;
+}
 .authored-courses h1{
   font-family: "Rubik", sans-serif;
   font-weight: bold;
