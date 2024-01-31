@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="registration">Новый курс</h1>
+    <h1 class="new-course-title">Новый курс</h1>
     <a-form
         :model="newCourseState"
         name="basic"
@@ -9,7 +9,7 @@
         :wrapper-col="{ span: 16 }"
         autocomplete="off"
         style="width: 600px; margin: 50px 0 0 25%;"
-        @submit.prevent="registrationUser"
+        @submit.prevent="addCourse"
     >
       <a-form-item
           label="Картинка"
@@ -106,7 +106,7 @@ export default {
     };
   },
   methods: {
-    async registrationUser() {
+    async addCourse() {
       try {
 
         const formData = new FormData();
@@ -117,6 +117,8 @@ export default {
         formData.append('course_price', this.newCourseState.course_price);
         formData.append('author_id', this.newCourseState.author_id);
 
+        console.log(this.newCourseState.author_id)
+
         const newCourseResponse = await instance.post('/courses', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -124,9 +126,10 @@ export default {
         });
 
         await this.$refs.formRef.validate();
-        console.log('Validation passed, sending API request...');
 
-        if (newCourseResponse.data && newCourseResponse.data.status) {
+        if (newCourseResponse.data && newCourseResponse.data.status !== undefined && newCourseResponse.data.status === false) {
+          message.error('Ошибка при создании курса: ' + newCourseResponse.data.message);
+        } else {
           this.registrationState = {
             course_img: null,
             title: '',
@@ -136,8 +139,6 @@ export default {
           };
           message.success('Курс создан!');
           router.push('/');
-        } else {
-          message.error('Ошибка при создании курса: ' + newCourseResponse.data.message);
         }
       } catch (error) {
         if(error.response.status === 422){
@@ -210,7 +211,7 @@ export default {
 <style scoped>
 h1{
   margin-top: 50px;
-  margin-left: 34%;
+  text-align: center;
   font-size: 40px;
   color: #364d79;
 }

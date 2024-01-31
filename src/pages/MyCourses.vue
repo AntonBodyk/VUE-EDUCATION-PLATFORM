@@ -9,6 +9,18 @@
         <img :src="course.course_img_url" alt="Sorry...">
         <h4>{{ course.title }}</h4>
         <span class="course-author">Автор: {{ course.author.second_name }} {{ course.author.first_name }} {{ course.author.last_name }}</span>
+        <a-space warp>
+          <a-button type="primary" class="delete-course-btn" @click="showModal(course.id)" danger>Удалить курс</a-button>
+        </a-space>
+        <a-modal v-model:open="open" title="Подтвердите удаление">
+          <a-space class="modal-btns">
+            <a-button type="primary" @click="closeModal" ghost>Нет</a-button>
+            <a-button type="primary" danger ghost @click="deleteCourse(), closeModal()">Да</a-button>
+          </a-space>
+          <template #footer>
+
+          </template>
+        </a-modal>
       </div>
     </div>
     <a-space wrap>
@@ -21,15 +33,27 @@
 
 <script>
 import {useCoursesStore} from "@/store/courseStore";
+import {instance} from "@/axios/axiosInstance";
+import {message} from "ant-design-vue";
+
 export default {
   data(){
     return{
       coursesPerRow: 5,
       visibleCoursesCount: 15,
       coursesStore: useCoursesStore(),
+      open: false,
+      deleteCourseId: null
     }
   },
   methods:{
+    showModal(courseId){
+      this.open = true;
+      this.deleteCourseId = courseId;
+    },
+    closeModal(){
+      this.open = false;
+    },
     loadMoreCourses() {
       this.visibleCoursesCount += 15;
     },
@@ -40,6 +64,16 @@ export default {
       }
       return result;
     },
+    async deleteCourse(){
+        const courseId = this.deleteCourseId;
+        const deleteCourseResponse = await instance.delete(`courses/${courseId}`);
+        if (deleteCourseResponse.status === 200){
+          this.coursesStore.removeCourse(courseId);
+          message.success('Курс успешно удален');
+        }else{
+          message.error('Ошибка при удалении курса');
+        }
+    }
   },
   computed:{
     visibleCourseRows() {
@@ -94,5 +128,13 @@ export default {
 .courses-list-empty-title{
   margin: 20px 0 0 90px;
   color: red;
+}
+.delete-course-btn{
+  font-family: "Rubik", sans-serif;
+  margin-top: 10px;
+}
+
+.modal-btns{
+  margin-top: 10px;
 }
 </style>

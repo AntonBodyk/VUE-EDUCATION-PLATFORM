@@ -15,7 +15,6 @@
           label="Фото"
           name="avatar"
           :rules="[
-              { required: true, message: 'Пожалуйста, добавьте фото!' },
               {
                   validator: validateAvatar,
               },
