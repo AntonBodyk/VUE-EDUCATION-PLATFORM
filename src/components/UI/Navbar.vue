@@ -28,8 +28,12 @@
         />
       </a-space>
 
+
     <div class="navbar-btns">
       <div class="teacher-courses" v-if="userRoleId === 2">
+        <ShoppingCartOutlined class="shop-cart-teacher"/>
+
+
         <router-link to="/new-course" class="create-course-link">Создать курс</router-link>
         <a class="teacher-courses-link" @click="navigateToMyCoursesPage()">Мои курсы</a>
       </div>
@@ -58,6 +62,8 @@
       </div>
 
       <a-space wrap v-else>
+        <ShoppingCartOutlined class="shop-cart"/>
+
         <a-button ghost class="sign-btn" @click="$router.push('/sign')">Войти</a-button>
         <a-button type="primary" class="registration-btn" @click="$router.push('/registration')">Регистрация</a-button>
       </a-space>
@@ -77,8 +83,12 @@ import {message} from "ant-design-vue";
 import {useUserStore} from "@/store/userStore";
 import {useCoursesStore} from "@/store/courseStore";
 import router from "@/routes/router";
+import { ShoppingCartOutlined } from '@ant-design/icons-vue';
 
 export default {
+  components:{
+    ShoppingCartOutlined
+  },
   data(){
     return{
       showInfoBlock: false,
@@ -206,6 +216,20 @@ export default {
 
 
 <style scoped>
+.shop-cart{
+  font-size: 24px;
+  color: white;
+  margin: 7px 0 0 280px;
+  cursor: pointer;
+}
+.shop-cart-teacher{
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  color: white;
+  margin: 7px 0 0 -40px;
+  cursor: pointer;
+}
 .drop-category{
   margin-top: 20px;
 }
@@ -241,7 +265,7 @@ export default {
 }
 .sign-btn{
   height: 40px;
-  margin: 4px 0 0 300px;
+  margin: 4px 0 0 20px;
 }
 .sign-btn:hover{
   color: white;
@@ -253,7 +277,7 @@ export default {
 }
 .user-initials .user-photo {
   display: inline-block;
-  margin: 6px 0 0 450px;
+  margin: 3px 0 0 450px;
   width: 40px;
   height: 40px;
   line-height: 40px;
@@ -341,13 +365,14 @@ export default {
   font-size: 18px;
 }
 .teacher-courses{
-  margin: 14px 0 0 150px;
+  margin: 0 0 0 150px;
 }
 .teacher-courses-link{
   font-family: "Rubik", sans-serif;
   color: white;
   text-decoration: none;
   cursor: pointer;
+  margin: -5px 0 0 -10px;
 }
 .teacher-courses-link:hover{
   color: white;
@@ -373,7 +398,7 @@ export default {
   color: white;
   text-decoration: none;
   cursor: pointer;
-  margin-right: 40px;
+  margin: 0 40px 0 40px;
 }
 .category-name:hover{
   color: aqua;
@@ -383,8 +408,5 @@ export default {
   height: 30px;
   margin: 10px 0 0 100px;
   font-family: "Rubik", sans-serif;
-}
-.ant-input-search-button{
-  color: #364d79;
 }
 </style>

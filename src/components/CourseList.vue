@@ -4,8 +4,8 @@
   </div>
   <div>
     <div class="course-list" v-for="row in visibleCourseRows" :key="row[0].id">
-      <div class="course" v-for="course in row" :key="course.id">
-        <img :src="course.course_img_url" alt="Sorry...">
+      <div class="course" v-for="course in row" @click="navigateToCoursePage(course.id)" :key="course.id">
+        <img :src="course.course_img_url"  alt="Sorry...">
         <h4>{{ course.title }}</h4>
         <span class="course-author">Автор: {{ course.author.second_name }} {{ course.author.first_name }} {{ course.author.last_name }}</span>
         <div class="course-price">{{course.course_price}}$</div>
@@ -21,6 +21,7 @@
 <script>
 import {instance} from "@/axios/axiosInstance";
 import {useCoursesStore} from "@/store/courseStore";
+import router from "@/routes/router";
 export default {
   data(){
       return{
@@ -40,6 +41,9 @@ export default {
       }
       return result;
     },
+    navigateToCoursePage(courseId){
+        router.push(`/courses/${courseId}`);
+    }
   },
   computed: {
     visibleCourseRows() {
@@ -68,6 +72,7 @@ export default {
 }
 .course{
   width: 240px;
+  cursor: pointer;
   margin: 20px 0 0 20px;
 }
 .course img{

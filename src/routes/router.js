@@ -7,6 +7,7 @@ import UserPage from "@/pages/UserPage.vue";
 import MyCourses from "@/pages/MyCourses.vue";
 import CategoryCoursesPage from "@/pages/CategoryCoursesPage.vue";
 import NewCoursePage from "@/pages/NewCoursePage.vue";
+import CoursePage from "@/pages/CoursePage.vue";
 
 
 
@@ -38,6 +39,10 @@ const routes = [
     {
         path: '/new-course',
         component: NewCoursePage
+    },
+    {
+        path: '/courses/:id',
+        component: CoursePage
     }
 
 ];
