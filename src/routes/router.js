@@ -8,6 +8,7 @@ import MyCourses from "@/pages/MyCourses.vue";
 import CategoryCoursesPage from "@/pages/CategoryCoursesPage.vue";
 import NewCoursePage from "@/pages/NewCoursePage.vue";
 import CoursePage from "@/pages/CoursePage.vue";
+import CartPage from "@/pages/CartPage.vue";
 
 
 
@@ -43,6 +44,10 @@ const routes = [
     {
         path: '/courses/:id',
         component: CoursePage
+    },
+    {
+        path: '/cart',
+        component: CartPage
     }
 
 ];

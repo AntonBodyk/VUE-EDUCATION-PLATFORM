@@ -31,7 +31,7 @@
 
     <div class="navbar-btns">
       <div class="teacher-courses" v-if="userRoleId === 2">
-        <ShoppingCartOutlined class="shop-cart-teacher"/>
+        <ShoppingCartOutlined class="shop-cart-teacher" @click="navigateToCartPage"/>
 
 
         <router-link to="/new-course" class="create-course-link">Создать курс</router-link>
@@ -62,7 +62,7 @@
       </div>
 
       <a-space wrap v-else>
-        <ShoppingCartOutlined class="shop-cart"/>
+        <ShoppingCartOutlined class="shop-cart" @click="navigateToCartPage"/>
 
         <a-button ghost class="sign-btn" @click="$router.push('/sign')">Войти</a-button>
         <a-button type="primary" class="registration-btn" @click="$router.push('/registration')">Регистрация</a-button>
@@ -134,6 +134,9 @@ export default {
         this.categoryCourse = response.data.data;
         console.log(this.categoryCourse);
         router.push(`/categories/${categoryId}`);
+      },
+      navigateToCartPage(){
+          router.push('/cart');
       },
       async logoutUser(){
         const accessToken = localStorage.getItem('auth_token');
