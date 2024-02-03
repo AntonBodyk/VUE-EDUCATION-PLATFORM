@@ -1,7 +1,6 @@
 <template>
   <div class="course-page" v-if="course.id">
     <h1 class="course-title">{{course.title}}</h1>
-<!--    <span>Рейтинг</span>-->
     <p v-if="course.author" class="course-author">Автор: {{ course.author.second_name }} {{ course.author.first_name }} {{ course.author.last_name }}</p>
 
     <div class="why-this-course">
@@ -59,29 +58,68 @@
         <p>Новички, которые никогда не пробовали программировать</p>
         <p>Программисты, которые хотят вникнуть в новый для себя язык программирования</p>
       </div>
+      <div class="course-rating">
+        <h2>Оцените курс</h2>
 
+        <div class="rating">
+          <star-rating
+              v-model="rating"
+              :star-size="30"
+              :read-only="false"
+              @update:rating ="submitRating"
+          />
+        </div>
+      </div>
     </div>
-    <CoursePageSidebare/>
+    <CoursePageSidebar/>
   </div>
 </template>
 
 <script>
 import {instance} from "@/axios/axiosInstance";
-import CoursePageSidebare from "@/components/CoursePageSidebare.vue";
+import {message} from "ant-design-vue";
+import CoursePageSidebar from "@/components/CoursePageSidebar.vue";
+import StarRating from 'vue-star-rating';
+import {useUserStore} from "@/store/userStore";
 export default {
   components:{
-    CoursePageSidebare
+    CoursePageSidebar, StarRating
   },
   data(){
     return{
-      course: []
+      course: [],
+      userStore: useUserStore(),
+      rating: 0
     }
   },
   methods:{
     async getCourse(courseId){
       const courseResponse = await instance.get(`/courses/${courseId}`);
-      console.log(courseResponse.data.data);
       this.course = courseResponse.data.data;
+    },
+    async submitRating(value){
+      this.rating = value;
+      const courseId = this.$route.params.id;
+      console.log(this.rating);
+      try {
+        const response = await instance.post(`/courses/${courseId}/rate`, {
+          course_rating: this.rating,
+          course_id: courseId,
+          user_id: this.userStore.user.id
+        });
+
+        // Обновление среднего рейтинга
+        this.course.average_rating = response.data.average_rating;
+
+        // Опционально: Можно также обновить отображение списка оценок или выполнить другие действия при необходимости
+      } catch (error) {
+        // Обработка ошибки при повторной оценке
+        if (error.response.status === 422) {
+          message.error('Вы уже оценили этот курс');
+        } else {
+          console.error(error);
+        }
+      }
     }
   },
   mounted() {
@@ -95,6 +133,7 @@ export default {
 }
 .course-page{
   font-family: "Rubik", sans-serif;
+  width: 100%;
 }
 .course-page h1{
   font-size: 35px;
@@ -148,5 +187,8 @@ export default {
 }
 .for-course-students h2{
   margin: 20px 0 0 50px;
+}
+.rating{
+  margin: 10px 0 0 50px;
 }
 </style>

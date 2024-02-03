@@ -32,8 +32,6 @@
     <div class="navbar-btns">
       <div class="teacher-courses" v-if="userRoleId === 2">
         <ShoppingCartOutlined class="shop-cart-teacher" @click="navigateToCartPage"/>
-
-
         <router-link to="/new-course" class="create-course-link">Создать курс</router-link>
         <a class="teacher-courses-link" @click="navigateToMyCoursesPage()">Мои курсы</a>
       </div>
@@ -224,6 +222,7 @@ export default {
   color: white;
   margin: 7px 0 0 280px;
   cursor: pointer;
+  z-index: 2;
 }
 .shop-cart-teacher{
   font-size: 24px;

@@ -8,6 +8,13 @@
         <img :src="course.course_img_url"  alt="Sorry...">
         <h4>{{ course.title }}</h4>
         <span class="course-author">Автор: {{ course.author.second_name }} {{ course.author.first_name }} {{ course.author.last_name }}</span>
+        <div class="course-rating">
+          <StarRating
+              :rating="course.average_rating"
+              :show-rating="false"
+              :star-size="17"
+              :read-only="true"/>
+        </div>
         <div class="course-price">{{course.course_price}}$</div>
       </div>
     </div>
@@ -19,15 +26,19 @@
 
 
 <script>
-import {instance} from "@/axios/axiosInstance";
 import {useCoursesStore} from "@/store/courseStore";
 import router from "@/routes/router";
+import StarRating from 'vue-star-rating';
 export default {
+  components:{
+    StarRating
+  },
   data(){
       return{
         coursesStore: useCoursesStore(),
         coursesPerRow: 5,
         visibleCoursesCount: 15,
+        rating: 0
       }
   },
   methods: {
@@ -104,5 +115,8 @@ export default {
   text-align: center;
   margin-top: 20px;
   color: red;
+}
+.course-rating{
+  margin-top: 5px;
 }
 </style>

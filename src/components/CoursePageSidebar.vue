@@ -68,7 +68,7 @@ export default {
 .sidebar{
   width: 320px;
   height: 460px;
-  margin: -51% 0 0 50%;
+  margin: -51% 0 30px 50%;
   position: fixed;
   box-shadow: 2px 2px 4px grey;
   border-radius: 5px;
