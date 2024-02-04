@@ -71,7 +71,7 @@
         </div>
       </div>
     </div>
-    <CoursePageSidebar/>
+    <CoursePageSidebar v-if="!isCourseCreator"/>
   </div>
 </template>
 
@@ -100,7 +100,6 @@ export default {
     async submitRating(value){
       this.rating = value;
       const courseId = this.$route.params.id;
-      console.log(this.rating);
       try {
         const response = await instance.post(`/courses/${courseId}/rate`, {
           course_rating: this.rating,
@@ -111,14 +110,19 @@ export default {
         // Обновление среднего рейтинга
         this.course.average_rating = response.data.average_rating;
 
-        // Опционально: Можно также обновить отображение списка оценок или выполнить другие действия при необходимости
       } catch (error) {
-        // Обработка ошибки при повторной оценке
         if (error.response.status === 422) {
           message.error('Вы уже оценили этот курс');
         } else {
           console.error(error);
         }
+      }
+    }
+  },
+  computed:{
+    isCourseCreator() {
+      if(this.userStore.user){
+        return this.course.author_id === this.userStore.user.id;
       }
     }
   },

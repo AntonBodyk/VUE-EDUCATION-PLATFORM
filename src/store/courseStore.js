@@ -5,6 +5,7 @@ export const useCoursesStore = defineStore( 'course', {
     state: () => ({
         courses: [],
         categoryCourses: [],
+        courseCategoryName: '',
         authUser: JSON.parse(localStorage.getItem('auth_user')) || null,
         searchQuery: '',
     }),
@@ -21,11 +22,13 @@ export const useCoursesStore = defineStore( 'course', {
         },
         async searchCourses(query) {
             try {
-                const response = await instance.get('/courses/search', {
-                    params: {searchQuery: query},
-                });
-                this.setCourses(response.data.data);
-                this.setCategoryCourses(response.data.data);
+                if(query !== ''){
+                    const response = await instance.get('/courses/search', {
+                        params: {searchQuery: query},
+                    });
+                    this.setCourses(response.data.data);
+                    this.setCategoryCourses(response.data.data);
+                }
             } catch (error) {
                 console.error('Ошибка при выполнении поиска курсов:', error);
                 this.setCourses([]);

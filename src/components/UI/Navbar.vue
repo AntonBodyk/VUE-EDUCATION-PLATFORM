@@ -11,7 +11,7 @@
         <template #overlay>
           <a-menu class="drop-category">
             <a-menu-item v-for="category in categories" :key="category.id" class="category-name">
-              <a href="#" @click="navigateToCategoriesPage(category.id)">{{category.category_name}}</a>
+              <a href="#" @click="navigateToCategoriesPage(category)">{{category.category_name}}</a>
             </a-menu-item>
           </a-menu>
         </template>
@@ -127,11 +127,12 @@ export default {
           router.push(`/users/${userId}/courses`);
         }
       },
-      async navigateToCategoriesPage(categoryId){
-        const response = await instance.get(`/categories/${categoryId}/courses`);
-        this.categoryCourse = response.data.data;
-        console.log(this.categoryCourse);
-        router.push(`/categories/${categoryId}`);
+      async navigateToCategoriesPage(category){
+        const response = await instance.get(`/categories/${category.id}/courses`);
+        this.courseStore.courseCategoryName = category.category_name;
+        // this.categoryCourse = response.data.data;
+        // console.log(this.categoryCourse);
+        router.push(`/categories/${category.id}`);
       },
       navigateToCartPage(){
           router.push('/cart');

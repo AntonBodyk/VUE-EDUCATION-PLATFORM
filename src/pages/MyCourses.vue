@@ -5,7 +5,7 @@
       <h2 class="courses-list-empty-title">У Вас нет таких курсов!</h2>
     </div>
     <div class="teacher-courses" v-for="row in visibleCourseRows" :key="row[0].id">
-      <div class="course" v-for="course in row" :key="course.id">
+      <div class="course" v-for="course in row" :key="course.id" @click="navigateToCoursePage(course.id)">
         <img :src="course.course_img_url" alt="Sorry...">
         <h4>{{ course.title }}</h4>
         <span class="course-author">Автор: {{ course.author.second_name }} {{ course.author.first_name }} {{ course.author.last_name }}</span>
@@ -35,6 +35,7 @@
 import {useCoursesStore} from "@/store/courseStore";
 import {instance} from "@/axios/axiosInstance";
 import {message} from "ant-design-vue";
+import router from "@/routes/router";
 
 export default {
   data(){
@@ -63,6 +64,9 @@ export default {
         result.push(arr.slice(i, i + size));
       }
       return result;
+    },
+    navigateToCoursePage(courseId){
+      router.push(`/courses/${courseId}`);
     },
     async deleteCourse(){
         const courseId = this.deleteCourseId;
@@ -103,6 +107,7 @@ export default {
 .course{
   width: 240px;
   margin: 20px 0 0 20px;
+  cursor: pointer;
 }
 .course img{
   width: 240px;
