@@ -1,77 +1,105 @@
 <template>
-  <div class="course-page" v-if="course.id">
-    <h1 class="course-title">{{course.title}}</h1>
-    <p v-if="course.author" class="course-author">Автор: {{ course.author.second_name }} {{ course.author.first_name }} {{ course.author.last_name }}</p>
+  <div class="course-page">
+    <div class="courses-list-empty" v-if="showSpinner">
+      <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    </div>
+    <div class="course-page-content" v-if="!showSpinner">
+      <h1 class="course-title">{{course.title}}</h1>
+      <p v-if="course.author" class="course-author">Автор: {{ course.author.second_name }} {{ course.author.first_name }} {{ course.author.last_name }}</p>
 
-    <div class="why-this-course">
-      <h2>Чему вы научитесь</h2>
-      <ul class="why-this-course-info-programming">
-        <li>
-          <img src="../../public/images/course-page-images/check1.png" alt="упс...">
-          <p>Писать простые программы на Python 3</p>
-        </li>
-        <li>
-          <img src="../../public/images/course-page-images/check1.png" alt="упс...">
-          <p>Логика с условиями и циклами</p>
-        </li>
-        <li>
-          <img src="../../public/images/course-page-images/check1.png" alt="упс...">
-          <p>Объектно-ориентированное программирование на Python</p>
-        </li>
-        <li>
-          <img src="../../public/images/course-page-images/check1.png" alt="упс...">
-          <p>Неизменяемые объекты</p>
-        </li>
-        <li>
-          <img src="../../public/images/course-page-images/check1.png" alt="упс...">
-          <p>Введение в SQL и PostgreSQL</p>
-        </li>
-        <li>
-          <img src="../../public/images/course-page-images/check1.png" alt="упс...">
-          <p>Декораторы</p>
-        </li>
-        <li>
-          <img src="../../public/images/course-page-images/check1.png" alt="упс...">
-          <p>Использование Jupyter Notebook</p>
-        </li>
-        <li>
-          <img src="../../public/images/course-page-images/check1.png" alt="упс...">
-          <p>Логика с условиями и циклами</p>
-        </li>
-      </ul>
+      <div class="why-this-course">
+        <h2>Чему вы научитесь</h2>
+        <ul class="why-this-course-info-programming">
+          <li>
+            <img src="../../public/images/course-page-images/check1.png" alt="упс...">
+            <p>Писать простые программы на Python 3</p>
+          </li>
+          <li>
+            <img src="../../public/images/course-page-images/check1.png" alt="упс...">
+            <p>Логика с условиями и циклами</p>
+          </li>
+          <li>
+            <img src="../../public/images/course-page-images/check1.png" alt="упс...">
+            <p>Объектно-ориентированное программирование на Python</p>
+          </li>
+          <li>
+            <img src="../../public/images/course-page-images/check1.png" alt="упс...">
+            <p>Неизменяемые объекты</p>
+          </li>
+          <li>
+            <img src="../../public/images/course-page-images/check1.png" alt="упс...">
+            <p>Введение в SQL и PostgreSQL</p>
+          </li>
+          <li>
+            <img src="../../public/images/course-page-images/check1.png" alt="упс...">
+            <p>Декораторы</p>
+          </li>
+          <li>
+            <img src="../../public/images/course-page-images/check1.png" alt="упс...">
+            <p>Использование Jupyter Notebook</p>
+          </li>
+          <li>
+            <img src="../../public/images/course-page-images/check1.png" alt="упс...">
+            <p>Логика с условиями и циклами</p>
+          </li>
+        </ul>
 
-    </div>
-    <div class="course-structure">
-      <h2>Материалы курса</h2>
-    </div>
-    <div class="description">
-      <h3>Описание курса</h3>
-      <p>{{course.body}}</p>
-    </div>
-    <div class="requirements">
-      <h2>Требования</h2>
-      <p>Современный компьютер с доступом к Интернет</p>
-    </div>
-    <div class="for-course-students">
-      <h2>Для кого этот курс</h2>
-      <div>
-        <p>Новички, которые никогда не пробовали программировать</p>
-        <p>Программисты, которые хотят вникнуть в новый для себя язык программирования</p>
       </div>
-      <div class="course-rating">
-        <h2>Оцените курс</h2>
+      <div class="course-structure">
+        <h2>Материалы курса</h2>
 
-        <div class="rating">
-          <star-rating
-              v-model="rating"
-              :star-size="30"
-              :read-only="false"
-              @update:rating ="submitRating"
-          />
+        <div class="course-lessons">
+          <div class="add-new-lesson" v-if="isCourseCreator">
+            <a-space wrap>
+              <a-button type="primary" class="add-new-lesson-btn" @click="navigateToNewLesson(this.$route.params.id)">Добавить урок</a-button>
+            </a-space>
+          </div>
+          <div class="course-lessons-block" v-for="lesson in lessons" :key="lesson.id">
+             <div class="lesson-title" @click="navigateToLesson(lesson.id)">{{lesson.title}}</div>
+              <a-space wrap v-if="isCourseCreator">
+                <a-button danger class="del-lesson" @click="showModal(lesson.id)">Удалить</a-button>
+              </a-space>
+              <a-modal v-model:open="open" title="Подтвердите удаление">
+                <a-space class="modal-btns">
+                  <a-button type="primary" @click="closeModal" ghost>Нет</a-button>
+                  <a-button type="primary" danger ghost @click="deleteLesson(), closeModal()">Да</a-button>
+                </a-space>
+                <template #footer>
+
+                </template>
+              </a-modal>
+          </div>
         </div>
       </div>
+      <div class="description">
+        <h3>Описание курса</h3>
+        <p>{{course.body}}</p>
+      </div>
+      <div class="requirements">
+        <h2>Требования</h2>
+        <p>Современный компьютер с доступом к Интернет</p>
+      </div>
+      <div class="for-course-students">
+        <h2>Для кого этот курс</h2>
+        <div>
+          <p>Новички, которые никогда не пробовали программировать</p>
+          <p>Программисты, которые хотят вникнуть в новый для себя язык программирования</p>
+        </div>
+        <div class="course-rating">
+          <h2>Оцените курс</h2>
+
+          <div class="rating">
+            <star-rating
+                v-model="rating"
+                :star-size="30"
+                :read-only="false"
+                @update:rating ="submitRating"
+            />
+          </div>
+        </div>
+      </div>
+      <CoursePageSidebar v-if="!isCourseCreator"/>
     </div>
-    <CoursePageSidebar v-if="!isCourseCreator"/>
   </div>
 </template>
 
@@ -81,6 +109,7 @@ import {message} from "ant-design-vue";
 import CoursePageSidebar from "@/components/CoursePageSidebar.vue";
 import StarRating from 'vue-star-rating';
 import {useUserStore} from "@/store/userStore";
+import router from "@/routes/router";
 export default {
   components:{
     CoursePageSidebar, StarRating
@@ -88,14 +117,36 @@ export default {
   data(){
     return{
       course: [],
+      lessons: [],
       userStore: useUserStore(),
-      rating: 0
+      rating: 0,
+      showSpinner: false,
+      open: false,
+      deleteLessonId: null
     }
   },
   methods:{
+    showModal(lessonId){
+      this.open = true;
+      this.deleteLessonId = lessonId;
+    },
+    closeModal(){
+      this.open = false;
+    },
     async getCourse(courseId){
-      const courseResponse = await instance.get(`/courses/${courseId}`);
-      this.course = courseResponse.data.data;
+      try {
+        this.showSpinner = true;
+
+        const courseResponse = await instance.get(`/courses/${courseId}`);
+        this.course = courseResponse.data.data;
+
+        const courseLessonResponse = await instance.get(`/courses/${courseId}/lessons`);
+        this.lessons = courseLessonResponse.data.data;
+      }catch (error) {
+        message.error('Ошибка при получении курсов:', error);
+      }finally {
+        this.showSpinner = false;
+      }
     },
     async submitRating(value){
       this.rating = value;
@@ -107,7 +158,6 @@ export default {
           user_id: this.userStore.user.id
         });
 
-        // Обновление среднего рейтинга
         this.course.average_rating = response.data.average_rating;
 
       } catch (error) {
@@ -116,6 +166,32 @@ export default {
         } else {
           console.error(error);
         }
+      }
+    },
+    async deleteLesson(){
+      const lessonId = this.deleteLessonId;
+      const deleteLessonResponse = await instance.delete(`lessons/${lessonId}`);
+      if (deleteLessonResponse.status === 200){
+        this.removeLesson(lessonId);
+        message.success('Урок успешно удален');
+      }else{
+        message.error('Ошибка при удалении урока');
+      }
+    },
+    removeLesson(lessonId) {
+      const index = this.lessons.findIndex(lesson => lesson.id === lessonId);
+      if (index !== -1) {
+        this.lessons.splice(index, 1);
+      }
+    },
+    navigateToNewLesson(courseId){
+      return router.push(`/new-lesson/${courseId}`);
+    },
+    navigateToLesson(lessonId){
+      if(this.userStore.user){
+        return router.push(`/lessons/${lessonId}`);
+      }else{
+        return router.push('/registration');
       }
     }
   },
@@ -135,6 +211,15 @@ export default {
 .course-structure{
   margin: 20px 0 0 50px;
 }
+.lesson-title{
+  margin-right: 50px;
+  color: grey;
+  cursor: pointer;
+}
+.lesson-title:hover{
+  color: #364d79;
+}
+
 .course-page{
   font-family: "Rubik", sans-serif;
   width: 100%;
@@ -194,5 +279,96 @@ export default {
 }
 .rating{
   margin: 10px 0 0 50px;
+}
+
+.lds-default {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 10% 0 0 48%;
+}
+.lds-default div {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #364d79;
+  border-radius: 50%;
+  animation: lds-default 1.2s linear infinite;
+}
+.lds-default div:nth-child(1) {
+  animation-delay: 0s;
+  top: 37px;
+  left: 66px;
+}
+.lds-default div:nth-child(2) {
+  animation-delay: -0.1s;
+  top: 22px;
+  left: 62px;
+}
+.lds-default div:nth-child(3) {
+  animation-delay: -0.2s;
+  top: 11px;
+  left: 52px;
+}
+.lds-default div:nth-child(4) {
+  animation-delay: -0.3s;
+  top: 7px;
+  left: 37px;
+}
+.lds-default div:nth-child(5) {
+  animation-delay: -0.4s;
+  top: 11px;
+  left: 22px;
+}
+.lds-default div:nth-child(6) {
+  animation-delay: -0.5s;
+  top: 22px;
+  left: 11px;
+}
+.lds-default div:nth-child(7) {
+  animation-delay: -0.6s;
+  top: 37px;
+  left: 7px;
+}
+.lds-default div:nth-child(8) {
+  animation-delay: -0.7s;
+  top: 52px;
+  left: 11px;
+}
+.lds-default div:nth-child(9) {
+  animation-delay: -0.8s;
+  top: 62px;
+  left: 22px;
+}
+.lds-default div:nth-child(10) {
+  animation-delay: -0.9s;
+  top: 66px;
+  left: 37px;
+}
+.lds-default div:nth-child(11) {
+  animation-delay: -1s;
+  top: 62px;
+  left: 52px;
+}
+.lds-default div:nth-child(12) {
+  animation-delay: -1.1s;
+  top: 52px;
+  left: 62px;
+}
+@keyframes lds-default {
+  0%, 20%, 80%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+}
+.course-lessons-block{
+  margin-top: 20px;
+  display: flex;
+}
+.del-lesson{
+  margin-top: -10px;
 }
 </style>

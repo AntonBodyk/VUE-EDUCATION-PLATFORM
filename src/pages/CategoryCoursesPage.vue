@@ -1,10 +1,10 @@
 <template>
     <div class="category-page">
-      <h1>Курсы в категории "{{coursesStore.courseCategoryName}}"</h1>
-      <div class="courses-list-empty" v-if="coursesStore.categoryCourses.length <= 0">
+      <h1 v-if="!showSpinner">Курсы в категории "{{coursesStore.courseCategoryName}}"</h1>
+      <div class="courses-list-empty" v-if="showSpinner">
         <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
       </div>
-      <div class="category-courses" v-for="row in visibleCourseRows" :key="row[0].id">
+      <div class="category-courses" v-for="row in visibleCourseRows" :key="row[0].id" v-if="!showSpinner">
         <div class="course" v-for="course in row" :key="course.id" @click="navigateToCoursePage(course.id)">
           <img :src="course.course_img_url" alt="Sorry...">
           <h4>{{ course.title }}</h4>
@@ -17,7 +17,7 @@
           <div class="course-price">{{course.course_price}}$</div>
         </div>
       </div>
-      <a-space wrap>
+      <a-space wrap v-if="!showSpinner">
         <a-button class="load-more-btn" type="primary" @click="loadMoreCourses" v-if="visibleCourseRows.length * coursesPerRow < coursesStore.categoryCourses.length">Еще</a-button>
       </a-space>
     </div>
@@ -44,19 +44,23 @@ export default {
       categoryCourse: [],
       coursesPerRow: 5,
       visibleCoursesCount: 15,
+      showSpinner: false
     }
   },
   methods: {
-      async getCoursesByCategory() {
-        const categoryId = this.$route.params.id;
-        try {
-          const categoryCoursesResponse = await instance.get(`/categories/${categoryId}/courses`);
-          this.coursesStore.setCategoryCourses(categoryCoursesResponse.data.data);
+    async getCoursesByCategory() {
+      const categoryId = this.$route.params.id;
+      try {
+        this.showSpinner = true;
 
-        } catch (error) {
-          console.error('Ошибка при получении курсов:', error);
-        }
-      },
+        const categoryCoursesResponse = await instance.get(`/categories/${categoryId}/courses`);
+        this.coursesStore.setCategoryCourses(categoryCoursesResponse.data.data);
+      } catch (error) {
+        console.error('Ошибка при получении курсов:', error);
+      } finally {
+        this.showSpinner = false;
+      }
+    },
       loadMoreCourses() {
         this.visibleCoursesCount += 15;
       },
@@ -130,10 +134,6 @@ export default {
   background-color: azure;
   color: black;
 }
-.courses-list-empty-title{
-  margin: 20px 0 0 90px;
-  color: red;
-}
 .course-price{
   font-weight: bold;
   margin-top: 10px;
@@ -143,7 +143,7 @@ export default {
   position: relative;
   width: 80px;
   height: 80px;
-  margin-left: 47%;
+  margin: 10% 0 0 48%;
 }
 .lds-default div {
   position: absolute;

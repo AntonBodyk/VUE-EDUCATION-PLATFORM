@@ -130,7 +130,7 @@ export default {
         if (newCourseResponse.data && newCourseResponse.data.status !== undefined && newCourseResponse.data.status === false) {
           message.error('Ошибка при создании курса: ' + newCourseResponse.data.message);
         } else {
-          this.registrationState = {
+          this.newCourseState = {
             course_img: null,
             title: '',
             body: '',

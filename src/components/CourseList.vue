@@ -119,7 +119,7 @@ export default {
   position: relative;
   width: 80px;
   height: 80px;
-  margin-left: 48%;
+  margin: 0 0 20px 48%;
 }
 .lds-default div {
   position: absolute;

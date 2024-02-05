@@ -9,6 +9,8 @@ import CategoryCoursesPage from "@/pages/CategoryCoursesPage.vue";
 import NewCoursePage from "@/pages/NewCoursePage.vue";
 import CoursePage from "@/pages/CoursePage.vue";
 import CartPage from "@/pages/CartPage.vue";
+import NewLessonPage from "@/pages/NewLessonPage.vue";
+import LessonPage from "@/pages/LessonPage.vue";
 
 
 
@@ -48,8 +50,15 @@ const routes = [
     {
         path: '/cart',
         component: CartPage
+    },
+    {
+        path: '/new-lesson/:id',
+        component: NewLessonPage
+    },
+    {
+        path: '/lessons/:id',
+        component: LessonPage
     }
-
 ];
 
 const router = createRouter({
