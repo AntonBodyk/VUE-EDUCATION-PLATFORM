@@ -11,6 +11,7 @@ import CoursePage from "@/pages/CoursePage.vue";
 import CartPage from "@/pages/CartPage.vue";
 import NewLessonPage from "@/pages/NewLessonPage.vue";
 import LessonPage from "@/pages/LessonPage.vue";
+import VideoRecordPage from "@/pages/VideoRecordPage.vue";
 
 
 
@@ -58,6 +59,10 @@ const routes = [
     {
         path: '/lessons/:id',
         component: LessonPage
+    },
+    {
+        path: '/record-video',
+        component: VideoRecordPage
     }
 ];
 

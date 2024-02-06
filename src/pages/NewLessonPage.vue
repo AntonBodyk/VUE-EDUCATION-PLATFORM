@@ -38,6 +38,7 @@
             <a-icon type="upload" /> {{selectedVideoName || 'Выбрать файл'}}
           </a-button>
         </a-upload>
+        <a class="recorder-video-link" @click="navigateToRecordVideo" v-if="!selectedVideoName">Так же, Вы можете записать видео!</a>
       </a-form-item>
       <a-form-item
           label="Описание"
@@ -72,6 +73,7 @@
         <a-button class="register-btn" type="primary" html-type="submit">Создать</a-button>
       </a-form-item>
     </a-form>
+
   </div>
 </template>
 
@@ -168,11 +170,10 @@ export default {
         return Promise.reject('Пожалуйста, добавьте видео!');
       }
 
-      const allowedTypes = ['video/mp4', 'video/webm', 'video/ogg'];
-      const fileType = value.type;
-
-      if (!allowedTypes.includes(fileType)) {
-        return Promise.reject('Допустимые типы файлов: mp4, webm, ogg');
+      const extension = value.name.split('.').pop().toLowerCase();
+      const allowedExtensions = ['mp4', 'webm', 'mkv'];
+      if (!allowedExtensions.includes(extension)) {
+        return Promise.reject('Допустимые типы файлов: mp4, webm, mkv');
       }
 
       // Дополнительные проверки на размер, длительность, разрешение и т.д.
@@ -197,6 +198,9 @@ export default {
 
       return Promise.resolve();
     },
+    navigateToRecordVideo(){
+      return router.push('/record-video');
+    }
   },
   mounted(){
     this.newLessonState.teacher_id = this.userStore.user ? this.userStore.user.id : null;
@@ -221,5 +225,9 @@ h1{
 }
 .register-btn:hover{
   background-color: #364d79;
+}
+.recorder-video-link{
+  margin-left: 20px;
+  color: #364d79;
 }
 </style>
