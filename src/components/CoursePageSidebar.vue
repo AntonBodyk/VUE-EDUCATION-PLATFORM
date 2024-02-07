@@ -3,12 +3,12 @@
       <h1>{{course.course_price}}$</h1>
     <div class="add-to-cart">
       <a-space wrap>
-        <a-button type="primary" class="add-to-cart-btn">Добавить в корзину</a-button>
+        <a-button type="primary" class="add-to-cart-btn" @click="cartStore.addToCart(course)">Добавить в корзину</a-button>
       </a-space>
     </div>
     <div class="buy-now">
       <a-space wrap>
-        <a-button type="primary" class="buy-now-btn">Купить сейчас</a-button>
+        <a-button type="primary" class="buy-now-btn" @click="checkUserSign">Купить сейчас</a-button>
       </a-space>
     </div>
     <div class="refund">
@@ -43,23 +43,28 @@
 </template>
 
 <script>
-import {instance} from "@/axios/axiosInstance";
+import {useUserStore} from "@/store/userStore";
+import {useCartStore} from "@/store/cartStore";
+import router from "@/routes/router";
 
 export default {
+  props:{
+    course: Object
+  },
   data(){
     return{
-      course: []
+      userStore: useUserStore(),
+      cartStore: useCartStore()
     }
   },
   methods:{
-    async getCourse(courseId){
-      const courseResponse = await instance.get(`/courses/${courseId}`);
-      console.log(courseResponse.data.data);
-      this.course = courseResponse.data.data;
+    checkUserSign(){
+      if(this.userStore.user){
+        console.log('Купить курс');
+      }else{
+        router.push('/registration');
+      }
     }
-  },
-  mounted() {
-    this.getCourse(this.$route.params.id);
   }
 }
 </script>
@@ -68,10 +73,12 @@ export default {
 .sidebar{
   width: 320px;
   height: 460px;
-  margin: -51% 0 30px 50%;
-  position: fixed;
+  position: absolute;
   box-shadow: 2px 2px 4px grey;
   border-radius: 5px;
+  left: 50%;
+  bottom: 83px;
+  margin-top: -30%;
 }
 .sidebar span{
   color: grey;

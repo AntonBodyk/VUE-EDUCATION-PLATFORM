@@ -36,6 +36,7 @@
         <a class="teacher-courses-link" @click="navigateToMyCoursesPage()">Мои курсы</a>
       </div>
       <div class="student-courses" v-if="userRoleId === 3">
+        <ShoppingCartOutlined class="shop-cart-student" @click="navigateToCartPage"/>
         <a class="student-courses-link" href="#">Моё обучение</a>
       </div>
       <div class="user-initials" v-if="userAuth">
@@ -130,8 +131,6 @@ export default {
       async navigateToCategoriesPage(category){
         const response = await instance.get(`/categories/${category.id}/courses`);
         this.courseStore.courseCategoryName = category.category_name;
-        // this.categoryCourse = response.data.data;
-        // console.log(this.categoryCourse);
         router.push(`/categories/${category.id}`);
       },
       navigateToCartPage(){
@@ -226,6 +225,15 @@ export default {
   z-index: 2;
 }
 .shop-cart-teacher{
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  color: white;
+  margin: 7px 0 0 -40px;
+  cursor: pointer;
+}
+
+.shop-cart-student{
   font-size: 24px;
   width: 24px;
   height: 24px;
@@ -381,7 +389,7 @@ export default {
   color: white;
 }
 .student-courses{
-  margin: 14px 0 0 230px;
+  margin: 3px 0 0 230px;
 }
 .student-courses-link{
   font-family: "Rubik", sans-serif;

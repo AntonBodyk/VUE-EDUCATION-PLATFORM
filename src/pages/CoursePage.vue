@@ -98,7 +98,7 @@
           </div>
         </div>
       </div>
-      <CoursePageSidebar v-if="!isCourseCreator"/>
+      <CoursePageSidebar v-if="!isCourseCreator" :course="course"/>
     </div>
   </div>
 </template>
@@ -207,6 +207,7 @@ export default {
   }
 }
 </script>
+
 <style scoped>
 .course-structure{
   margin: 20px 0 0 50px;

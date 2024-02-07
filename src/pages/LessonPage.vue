@@ -12,7 +12,12 @@
       </div>
       <div class="lesson-exercise">
         <h2>Задание</h2>
-        <a href=#>Cкачать задание</a>
+        <div>
+          <embed v-if="lesson.lesson_exercise_url" :src="lesson.lesson_exercise_url" type="application/pdf" width="500px" height="200px" />
+        </div>
+        <a-space wrap>
+          <a-button type="primary" @click="openPDF">Открыть</a-button>
+        </a-space>
       </div>
     </div>
   </div>
@@ -31,6 +36,13 @@ export default {
     }
   },
   methods:{
+    openPDF() {
+      console.log(this.lesson.lesson_exercise_url);
+      console.log('click');
+      if (this.lesson.lesson_exercise_url) {
+        window.open(this.lesson.lesson_exercise_url, '_blank');
+      }
+    },
     async getLesson(lessonId){
       try {
         this.showSpinner = true;
