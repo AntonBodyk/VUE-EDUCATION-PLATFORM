@@ -32,12 +32,14 @@
     <div class="navbar-btns">
       <div class="teacher-courses" v-if="userRoleId === 2">
         <ShoppingCartOutlined class="shop-cart-teacher" @click="navigateToCartPage"/>
+        <span class="cart-teacher-count" v-if="cartStore.cartCourses.length > 0">{{cartItemCount}}</span>
         <router-link to="/new-course" class="create-course-link">Создать курс</router-link>
         <a class="teacher-courses-link" @click="navigateToMyCoursesPage()">Мои курсы</a>
       </div>
       <div class="student-courses" v-if="userRoleId === 3">
         <ShoppingCartOutlined class="shop-cart-student" @click="navigateToCartPage"/>
-        <a class="student-courses-link" href="#">Моё обучение</a>
+        <span class="cart-student-count"  v-if="cartStore.cartCourses.length > 0">{{cartItemCount}}</span>
+        <a class="student-courses-link" @click="navigateToMyLearningPage">Моё обучение</a>
       </div>
       <div class="user-initials" v-if="userAuth">
         <div class="user-icons">
@@ -62,7 +64,7 @@
 
       <a-space wrap v-else>
         <ShoppingCartOutlined class="shop-cart" @click="navigateToCartPage"/>
-
+        <span class="cart-count"  v-if="cartStore.cartCourses.length > 0">{{cartItemCount}}</span>
         <a-button ghost class="sign-btn" @click="$router.push('/sign')">Войти</a-button>
         <a-button type="primary" class="registration-btn" @click="$router.push('/registration')">Регистрация</a-button>
       </a-space>
@@ -81,6 +83,7 @@ import {instance} from "@/axios/axiosInstance";
 import {message} from "ant-design-vue";
 import {useUserStore} from "@/store/userStore";
 import {useCoursesStore} from "@/store/courseStore";
+import {useCartStore} from "@/store/cartStore";
 import router from "@/routes/router";
 import { ShoppingCartOutlined } from '@ant-design/icons-vue';
 
@@ -94,7 +97,8 @@ export default {
       categories: [],
       searchValue: '',
       userStore: useUserStore(),
-      courseStore: useCoursesStore()
+      courseStore: useCoursesStore(),
+      cartStore: useCartStore()
     }
   },
   methods:{
@@ -126,6 +130,12 @@ export default {
         if (localStorage.getItem('auth_user') && localStorage.getItem('auth_token') !== null) {
           const userId = this.userStore.user ? this.userStore.user.id : null;
           router.push(`/users/${userId}/courses`);
+        }
+      },
+      navigateToMyLearningPage(){
+        if (localStorage.getItem('auth_user') && localStorage.getItem('auth_token') !== null) {
+          const userId = this.userStore.user ? this.userStore.user.id : null;
+          router.push(`/users/${userId}/learning`);
         }
       },
       async navigateToCategoriesPage(category){
@@ -171,6 +181,9 @@ export default {
     this.getCourseCaregories();
   },
   computed:{
+    cartItemCount(){
+      return this.cartStore.cartCourses.length;
+    },
     userName(){
       return this.userStore.user ? this.userStore.user.first_name : null;
     },
@@ -217,6 +230,32 @@ export default {
 
 
 <style scoped>
+.cart-count {
+  margin: -5px 0 0 -17px;
+  background-color: blue;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+}
+.cart-student-count{
+  margin: -25px 0 0 -25px;
+  background-color: blue;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
 .shop-cart{
   font-size: 24px;
   color: white;

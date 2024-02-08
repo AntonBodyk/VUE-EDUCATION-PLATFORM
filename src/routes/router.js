@@ -12,6 +12,7 @@ import CartPage from "@/pages/CartPage.vue";
 import NewLessonPage from "@/pages/NewLessonPage.vue";
 import LessonPage from "@/pages/LessonPage.vue";
 import VideoRecordPage from "@/pages/VideoRecordPage.vue";
+import MyLearningPage from "@/pages/MyLearningPage.vue";
 
 
 
@@ -35,6 +36,10 @@ const routes = [
     {
         path: '/users/:id/courses',
         component: MyCourses
+    },
+    {
+        path: '/users/:id/learning',
+        component: MyLearningPage
     },
     {
         path: '/categories/:id',

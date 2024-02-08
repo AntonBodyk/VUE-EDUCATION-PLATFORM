@@ -1,10 +1,13 @@
 <template>
   <div class="sidebar">
       <h1>{{course.course_price}}$</h1>
-    <div class="add-to-cart">
+    <div class="add-to-cart" v-if="!cartStore.isAddedToCart(course)">
       <a-space wrap>
         <a-button type="primary" class="add-to-cart-btn" @click="cartStore.addToCart(course)">Добавить в корзину</a-button>
       </a-space>
+    </div>
+    <div class="add-to-cart" v-else>
+      <a-button type="primary" class="add-to-cart-btn" @click="goToCart" >Перейти в корзину</a-button>
     </div>
     <div class="buy-now">
       <a-space wrap>
@@ -43,9 +46,11 @@
 </template>
 
 <script>
+import {instance} from "@/axios/axiosInstance";
 import {useUserStore} from "@/store/userStore";
 import {useCartStore} from "@/store/cartStore";
 import router from "@/routes/router";
+import {message} from "ant-design-vue";
 
 export default {
   props:{
@@ -58,12 +63,30 @@ export default {
     }
   },
   methods:{
-    checkUserSign(){
-      if(this.userStore.user){
-        console.log('Купить курс');
-      }else{
-        router.push('/registration');
+    async checkUserSign() {
+      if (this.userStore.user) {
+        try {
+          const response = await instance.post("/student-courses", {
+            user_id: this.userStore.user.id,
+            course_ids: [this.course.id] // Передаем только ID текущего курса
+          });
+
+          console.log(response.data.message); // Выводим сообщение от сервера
+
+
+          // Перенаправляем пользователя на страницу курсов
+          router.push("/");
+          message.success('Спасибо за покупку!');
+
+        } catch (error) {
+          console.error("Ошибка покупки курса:", error);
+        }
+      } else {
+        router.push("/registration");
       }
+    },
+    goToCart(){
+      router.push('/cart');
     }
   }
 }
