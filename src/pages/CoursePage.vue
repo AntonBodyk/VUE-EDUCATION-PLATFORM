@@ -98,7 +98,7 @@
           </div>
         </div>
       </div>
-      <CoursePageSidebar v-if="!isCourseCreator" :course="course"/>
+      <CoursePageSidebar v-if="!isCourseCreator && !isCoursePurchased" :course="course"/>
     </div>
   </div>
 </template>
@@ -109,6 +109,7 @@ import {message} from "ant-design-vue";
 import CoursePageSidebar from "@/components/CoursePageSidebar.vue";
 import StarRating from 'vue-star-rating';
 import {useUserStore} from "@/store/userStore";
+import {useCoursesStore} from "@/store/courseStore";
 import router from "@/routes/router";
 export default {
   components:{
@@ -119,6 +120,7 @@ export default {
       course: [],
       lessons: [],
       userStore: useUserStore(),
+      courseStore: useCoursesStore(),
       rating: 0,
       showSpinner: false,
       open: false,
@@ -200,7 +202,13 @@ export default {
       if(this.userStore.user){
         return this.course.author_id === this.userStore.user.id;
       }
-    }
+    },
+    isCoursePurchased() {
+      const courseId = this.$route.params.id;
+      console.log(courseId)
+
+      return this.courseStore.studentCourses.filter(course => course.id === courseId);
+    },
   },
   mounted() {
     this.getCourse(this.$route.params.id);

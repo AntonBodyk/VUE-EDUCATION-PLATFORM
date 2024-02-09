@@ -3,8 +3,8 @@ import { defineStore } from 'pinia';
 export const useCartStore = defineStore({
     id: 'cart',
     state: () => ({
-        // cartCourses: JSON.parse(localStorage.getItem('cartCourses')) || null,
-        cartCourses: []
+        cartCourses: JSON.parse(localStorage.getItem('cartCourses')) || null,
+        // cartCourses: []
     }),
     actions: {
         addToCart(course) {
@@ -23,15 +23,10 @@ export const useCartStore = defineStore({
         },
         clearCart() {
             this.cartCourses = [];
-            if (localStorage) {
-                this.clearCartLocalStorage(); // Вызываем метод для очистки localStorage
-            }
+            this.saveCartToLocalStorage();
         },
         saveCartToLocalStorage() {
             localStorage.setItem('cartCourses', JSON.stringify(this.cartCourses));
-        },
-        clearCartLocalStorage() {
-            localStorage.removeItem('cartCourses');
         }
     }
 });

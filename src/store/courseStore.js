@@ -8,6 +8,7 @@ export const useCoursesStore = defineStore( 'course', {
         courseCategoryName: '',
         authUser: JSON.parse(localStorage.getItem('auth_user')) || null,
         searchQuery: '',
+        studentCourses: []
     }),
     actions: {
         setCourses(courses) {
@@ -15,6 +16,9 @@ export const useCoursesStore = defineStore( 'course', {
         },
         setCategoryCourses(categoryCourses){
             this.categoryCourses = categoryCourses;
+        },
+        setStudentCourses(studentCourses){
+            this.studentCourses = studentCourses;
         },
         async getCourses(){
             const coursesResponse = await instance.get('/courses');
@@ -28,6 +32,7 @@ export const useCoursesStore = defineStore( 'course', {
                     });
                     this.setCourses(response.data.data);
                     this.setCategoryCourses(response.data.data);
+                    this.setStudentCourses(response.data.data);
                 }
             } catch (error) {
                 console.error('Ошибка при выполнении поиска курсов:', error);
@@ -47,6 +52,13 @@ export const useCoursesStore = defineStore( 'course', {
     getters:{
         authorCourses(state){
             return state.courses.filter(course => course.author_id === state.authUser.id);
+        },
+        filterStudentCourses(state){
+            if (state.studentCourses && state.authUser) {
+                return state.studentCourses.filter(course => course.pivot.user_id === state.authUser.id);
+            } else {
+                return [];
+            }
         }
     },
 });

@@ -76,9 +76,7 @@ export default {
     async checkUserSign() {
         if (this.userStore.user) {
           try {
-            console.log(this.cartStore.cartCourses.course_img_url);
-            console.log(this.cartStore.cartCourses.title);
-            const response = await instance.post('/student-courses', {
+            const response = await instance.post('/enroll-courses', {
               user_id: this.userStore.user.id,
               course_ids: this.cartStore.cartCourses.map(course => course.id)
             });

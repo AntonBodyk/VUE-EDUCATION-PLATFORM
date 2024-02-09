@@ -66,7 +66,7 @@ export default {
     async checkUserSign() {
       if (this.userStore.user) {
         try {
-          const response = await instance.post("/student-courses", {
+          const response = await instance.post("/enroll-courses", {
             user_id: this.userStore.user.id,
             course_ids: [this.course.id] // Передаем только ID текущего курса
           });
