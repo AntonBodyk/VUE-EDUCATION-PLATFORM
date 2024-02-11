@@ -33,13 +33,18 @@
       <div class="teacher-courses" v-if="userRoleId === 2">
         <ShoppingCartOutlined class="shop-cart-teacher" @click="navigateToCartPage"/>
         <span class="cart-teacher-count" v-if="cartStore.cartCourses.length > 0">{{cartItemCount}}</span>
-        <router-link to="/new-course" class="create-course-link">Создать курс</router-link>
-        <a class="teacher-courses-link" @click="navigateToMyCoursesPage()">Мои курсы</a>
+        <div class="teacher-link-container">
+          <router-link to="/new-course" class="create-course-link">Создать курс</router-link>
+          <a class="teacher-courses-link" @click="navigateToMyCoursesPage()">Мои курсы</a>
+        </div>
       </div>
       <div class="student-courses" v-if="userRoleId === 3">
         <ShoppingCartOutlined class="shop-cart-student" @click="navigateToCartPage"/>
         <span class="cart-student-count"  v-if="cartStore.cartCourses.length > 0">{{cartItemCount}}</span>
-        <a class="student-courses-link" @click="navigateToMyLearningPage">Моё обучение</a>
+        <div class="student-courses-link-container">
+          <a class="student-courses-link" @click="navigateToMyLearningPage">Моё обучение</a>
+        </div>
+
       </div>
       <div class="user-initials" v-if="userAuth">
         <div class="user-icons">
@@ -230,6 +235,17 @@ export default {
 
 
 <style scoped>
+.teacher-link-container{
+  position: absolute;
+  top: 17px;
+  height: 24px;
+}
+.student-courses-link-container {
+  position: absolute;
+  top: 17px;
+  right: 200px;
+  height: 24px;
+}
 .cart-count {
   margin: -5px 0 0 -17px;
   background-color: blue;
@@ -243,8 +259,9 @@ export default {
   align-items: center;
   z-index: 5;
 }
-.cart-student-count{
-  margin: -25px 0 0 -25px;
+.cart-teacher-count{
+  position: absolute;
+  margin: -30px 0 0 -25px;
   background-color: blue;
   color: white;
   border-radius: 50%;
@@ -254,7 +271,19 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-
+}
+.cart-student-count{
+  position: absolute;
+  margin: -30px 0 0 -25px;
+  background-color: blue;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .shop-cart{
   font-size: 24px;
@@ -268,7 +297,7 @@ export default {
   width: 24px;
   height: 24px;
   color: white;
-  margin: 7px 0 0 -40px;
+  margin: 14px 0 0 -40px;
   cursor: pointer;
 }
 
@@ -277,7 +306,7 @@ export default {
   width: 24px;
   height: 24px;
   color: white;
-  margin: 7px 0 0 -40px;
+  margin: 11px 0 0 -40px;
   cursor: pointer;
 }
 .drop-category{
@@ -324,10 +353,11 @@ export default {
 .user-initials{
   width: 40px;
   height: 40px;
+  position: relative;
 }
 .user-initials .user-photo {
   display: inline-block;
-  margin: 3px 0 0 450px;
+  margin: 0 0 0 450px;
   width: 40px;
   height: 40px;
   line-height: 40px;
@@ -355,7 +385,7 @@ export default {
   position: absolute;
   width: 300px;
   max-height: 150px;
-  margin-left: 350px;
+  margin-left: 180px;
   top: 50px;
   left: 50%;
   background-color: #fff;

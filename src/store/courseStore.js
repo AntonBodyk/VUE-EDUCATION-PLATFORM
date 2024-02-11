@@ -55,7 +55,7 @@ export const useCoursesStore = defineStore( 'course', {
         },
         filterStudentCourses(state){
             if (state.studentCourses && state.authUser) {
-                return state.studentCourses.filter(course => course.pivot.user_id === state.authUser.id);
+                return state.studentCourses;
             } else {
                 return [];
             }

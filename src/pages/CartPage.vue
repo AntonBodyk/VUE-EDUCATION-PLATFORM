@@ -19,8 +19,8 @@
       </div>
     </div>
     <div class="cart-course-list" v-for="row in visibleCourseRows" :key="row[0].id">
-      <div class="course" v-for="course in row" @click="navigateToCoursePage(course.id)" :key="course.id">
-        <img :src="course.course_img_url"  alt="Sorry...">
+      <div class="course" v-for="course in row" :key="course.id">
+        <img :src="course.course_img_url"  alt="Sorry..." @click="navigateToCoursePage(course.id)">
         <h4>{{ course.title }}</h4>
         <span class="course-author">Автор: {{ course.author.second_name }} {{ course.author.first_name }} {{ course.author.last_name }}</span>
         <div class="course-rating">

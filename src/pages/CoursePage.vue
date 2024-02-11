@@ -151,6 +151,11 @@ export default {
       }
     },
     async submitRating(value){
+      if(!this.isCourseCreator && !this.isCoursePurchased){
+        message.error('Купите курс, для того, что бы оценивать!');
+        return
+      }
+
       this.rating = value;
       const courseId = this.$route.params.id;
       try {
@@ -191,7 +196,11 @@ export default {
     },
     navigateToLesson(lessonId){
       if(this.userStore.user){
-        return router.push(`/lessons/${lessonId}`);
+        if (this.isCourseCreator || this.isCoursePurchased) {
+          return router.push(`/lessons/${lessonId}`);
+        } else {
+          message.error('Для доступа к уроку, купите курс!');
+        }
       }else{
         return router.push('/registration');
       }
@@ -199,15 +208,12 @@ export default {
   },
   computed:{
     isCourseCreator() {
-      if(this.userStore.user){
-        return this.course.author_id === this.userStore.user.id;
-      }
+      return this.userStore.user && this.course.author_id === this.userStore.user.id;
     },
     isCoursePurchased() {
       const courseId = this.$route.params.id;
-      console.log(courseId)
 
-      return this.courseStore.studentCourses.filter(course => course.id === courseId);
+      return this.courseStore.studentCourses.some(course => course.id === parseFloat(courseId));
     },
   },
   mounted() {

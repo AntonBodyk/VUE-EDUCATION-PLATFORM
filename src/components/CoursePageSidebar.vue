@@ -68,13 +68,11 @@ export default {
         try {
           const response = await instance.post("/enroll-courses", {
             user_id: this.userStore.user.id,
-            course_ids: [this.course.id] // Передаем только ID текущего курса
+            course_ids: [this.course.id]
           });
 
-          console.log(response.data.message); // Выводим сообщение от сервера
+          console.log(response.data.message);
 
-
-          // Перенаправляем пользователя на страницу курсов
           router.push("/");
           message.success('Спасибо за покупку!');
 
