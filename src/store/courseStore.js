@@ -63,7 +63,11 @@ export const useCoursesStore = defineStore( 'course', {
     },
     getters:{
         authorCourses(state){
-            return state.courses.filter(course => course.author_id === state.authUser.id);
+            if (state.authUser && state.authUser.id) {
+                return state.courses.filter(course => course.author_id === state.authUser.id);
+            } else {
+                return [];
+            }
         },
         filterStudentCourses(state){
             if (state.studentCourses && state.authUser) {
