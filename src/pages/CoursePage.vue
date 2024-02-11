@@ -57,6 +57,7 @@
           <div class="course-lessons-block" v-for="lesson in lessons" :key="lesson.id">
              <div class="lesson-title" @click="navigateToLesson(lesson.id)">{{lesson.title}}</div>
               <a-space wrap v-if="isCourseCreator">
+                <a-button primary @click="">Обновить</a-button>
                 <a-button danger class="del-lesson" @click="showModal(lesson.id)">Удалить</a-button>
               </a-space>
               <a-modal v-model:open="open" title="Подтвердите удаление">

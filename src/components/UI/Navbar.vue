@@ -111,7 +111,9 @@ export default {
         console.log("Search Query:", this.searchValue);
         this.courseStore.searchQuery = this.searchValue.trim();
         try {
+          const userId = this.userStore.user ? this.userStore.user.id : null;
           await this.courseStore.searchCourses(this.courseStore.searchQuery);
+          await this.courseStore.searchCoursesForUser(this.courseStore.searchQuery, userId);
         } catch (e) {
           console.error('Ошибка при выполнении поиска:', e);
         }

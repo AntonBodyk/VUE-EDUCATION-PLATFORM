@@ -32,11 +32,23 @@ export const useCoursesStore = defineStore( 'course', {
                     });
                     this.setCourses(response.data.data);
                     this.setCategoryCourses(response.data.data);
-                    this.setStudentCourses(response.data.data);
                 }
             } catch (error) {
                 console.error('Ошибка при выполнении поиска курсов:', error);
                 this.setCourses([]);
+            }
+        },
+        async searchCoursesForUser(query, userId) {
+            try {
+                if (query !== '') {
+                    const response = await instance.get('/courses/search', {
+                        params: { searchQuery: query, userId: userId }, // Додаємо userId в запит
+                    });
+                    this.setStudentCourses(response.data.data);
+                }
+            } catch (error) {
+                console.error('Помилка під час виконання пошуку курсів для користувача:', error);
+                this.setStudentCourses([]);
             }
         },
         addCourse(newCourse) {
