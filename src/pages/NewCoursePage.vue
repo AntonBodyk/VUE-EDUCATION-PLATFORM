@@ -186,10 +186,10 @@ export default {
     validatePrice(rule, value) {
       return new Promise((resolve, reject) => {
         if (value) {
-          const isNumericString = /^(\d+([.,]\d{1,2})?)$/.test(value);
+          const isNumericString = /^\d+\.\d{2}$/.test(value);
 
           if (!isNumericString) {
-            reject('Пожалуйста, введите только числовые значения!');
+            reject('Пожалуйста, введите десятичное число!');
           } else {
             resolve();
           }

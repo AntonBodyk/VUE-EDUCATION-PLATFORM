@@ -25,9 +25,3 @@ export const useUserStore = defineStore('user', {
         }
     },
 });
-
-
-
-export function setupUserStore() {
-    return useUserStore();
-}

@@ -4,7 +4,6 @@ export const useCartStore = defineStore({
     id: 'cart',
     state: () => ({
         cartCourses: JSON.parse(localStorage.getItem('cartCourses')) || null,
-        // cartCourses: []
     }),
     actions: {
         addToCart(course) {

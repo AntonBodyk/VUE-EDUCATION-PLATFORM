@@ -76,24 +76,24 @@ export default {
     async checkUserSign() {
         if (this.userStore.user) {
           try {
+            if (this.userStore.user.role_id === 2) {
+              message.error('Для покупки курса необходимо быть студентом.');
+              return;
+            }
+
             const response = await instance.post('/enroll-courses', {
               user_id: this.userStore.user.id,
               course_ids: this.cartStore.cartCourses.map(course => course.id)
             });
 
-            // Обработка успешного ответа
-            console.log(response.data.message); // Выводим сообщение от сервера
 
-            // Очистка корзины после успешной покупки
             this.cartStore.clearCart();
 
-            // Перенаправление пользователя на страницу с курсами
             const studentId = this.userStore.user.id;
             router.push(`/users/${studentId}/learning`);
             message.success('Спасибо за покупку!');
 
           } catch (error) {
-            // Обработка ошибки
             console.error('Ошибка покупки курсов:', error);
           }
         } else {

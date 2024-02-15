@@ -7,44 +7,7 @@
       <h1 class="course-title">{{course.title}}</h1>
       <p v-if="course.author" class="course-author">Автор: {{ course.author.second_name }} {{ course.author.first_name }} {{ course.author.last_name }}</p>
 
-      <div class="why-this-course">
-        <h2>Чему вы научитесь</h2>
-        <ul class="why-this-course-info-programming">
-          <li>
-            <img src="../../public/images/course-page-images/check1.png" alt="упс...">
-            <p>Писать простые программы на Python 3</p>
-          </li>
-          <li>
-            <img src="../../public/images/course-page-images/check1.png" alt="упс...">
-            <p>Логика с условиями и циклами</p>
-          </li>
-          <li>
-            <img src="../../public/images/course-page-images/check1.png" alt="упс...">
-            <p>Объектно-ориентированное программирование на Python</p>
-          </li>
-          <li>
-            <img src="../../public/images/course-page-images/check1.png" alt="упс...">
-            <p>Неизменяемые объекты</p>
-          </li>
-          <li>
-            <img src="../../public/images/course-page-images/check1.png" alt="упс...">
-            <p>Введение в SQL и PostgreSQL</p>
-          </li>
-          <li>
-            <img src="../../public/images/course-page-images/check1.png" alt="упс...">
-            <p>Декораторы</p>
-          </li>
-          <li>
-            <img src="../../public/images/course-page-images/check1.png" alt="упс...">
-            <p>Использование Jupyter Notebook</p>
-          </li>
-          <li>
-            <img src="../../public/images/course-page-images/check1.png" alt="упс...">
-            <p>Логика с условиями и циклами</p>
-          </li>
-        </ul>
 
-      </div>
       <div class="course-structure">
         <h2>Материалы курса</h2>
 
@@ -57,7 +20,6 @@
           <div class="course-lessons-block" v-for="lesson in lessons" :key="lesson.id">
              <div class="lesson-title" @click="navigateToLesson(lesson.id)">{{lesson.title}}</div>
               <a-space wrap v-if="isCourseCreator">
-                <a-button primary @click="">Обновить</a-button>
                 <a-button danger class="del-lesson" @click="showModal(lesson.id)">Удалить</a-button>
               </a-space>
               <a-modal v-model:open="open" title="Подтвердите удаление">

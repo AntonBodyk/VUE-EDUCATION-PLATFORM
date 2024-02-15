@@ -31,18 +31,30 @@ export const useCoursesStore = defineStore( 'course', {
                         params: {searchQuery: query},
                     });
                     this.setCourses(response.data.data);
-                    this.setCategoryCourses(response.data.data);
                 }
             } catch (error) {
                 console.error('Ошибка при выполнении поиска курсов:', error);
                 this.setCourses([]);
             }
         },
+        async searchCoursesCategory(query, categoryId) {
+            try {
+                if (query !== '') {
+                    const response = await instance.get('/courses/search', {
+                        params: { searchQuery: query, categoryId: categoryId },
+                    });
+                    this.setCategoryCourses(response.data.data);
+                }
+            } catch (error) {
+                console.error('Помилка під час виконання пошуку курсів для відповідної категорії:', error);
+                this.setStudentCourses([]);
+            }
+        },
         async searchCoursesForUser(query, userId) {
             try {
                 if (query !== '') {
                     const response = await instance.get('/courses/search', {
-                        params: { searchQuery: query, userId: userId }, // Додаємо userId в запит
+                        params: { searchQuery: query, userId: userId },
                     });
                     this.setStudentCourses(response.data.data);
                 }

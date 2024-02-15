@@ -17,31 +17,6 @@
     <div class="refund">
       <span>Гарантия возврата денег - 30 дней</span>
     </div>
-    <div class="course-content">
-      <h2>Этот курс включает:</h2>
-      <ul class="course-content-list">
-        <li>
-          <img src="../../public/images/course-page-images/video.png" alt="упс...">
-          <p>1,5 hours видео по запросу</p>
-        </li>
-        <li>
-          <img src="../../public/images/course-page-images/data_download.png" alt="упс...">
-          <p>2 ресурсов для скачивания</p>
-        </li>
-        <li>
-          <img src="../../public/images/course-page-images/mobilephone.png" alt="упс...">
-          <p>Доступ через мобильные устройства и телевизор</p>
-        </li>
-        <li>
-          <img src="../../public/images/course-page-images/infinity_icon.png" alt="упс...">
-          <p>Полный пожизненный доступ</p>
-        </li>
-        <li>
-          <img src="../../public/images/course-page-images/trophy_winner.png" alt="упс...">
-          <p>Сертификат об окончании</p>
-        </li>
-      </ul>
-    </div>
   </div>
 </template>
 
@@ -66,6 +41,12 @@ export default {
     async checkUserSign() {
       if (this.userStore.user) {
         try {
+
+          if (this.userStore.user.role_id === 2) {
+            message.error('Для покупки курса необходимо быть студентом.');
+            return;
+          }
+
           const response = await instance.post("/enroll-courses", {
             user_id: this.userStore.user.id,
             course_ids: [this.course.id]
@@ -93,13 +74,13 @@ export default {
 <style scoped>
 .sidebar{
   width: 320px;
-  height: 460px;
+  height: 250px;
   position: absolute;
   box-shadow: 2px 2px 4px grey;
   border-radius: 5px;
   left: 50%;
-  bottom: 83px;
-  margin-top: -30%;
+  bottom: 50%;
+
 }
 .sidebar span{
   color: grey;

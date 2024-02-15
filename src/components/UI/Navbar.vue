@@ -11,7 +11,7 @@
         <template #overlay>
           <a-menu class="drop-category">
             <a-menu-item v-for="category in categories" :key="category.id" class="category-name">
-              <a href="#" @click="navigateToCategoriesPage(category)">{{category.category_name}}</a>
+              <a href="#" @click="navigateToCategoriesPage(category, categoryId)">{{category.category_name}}</a>
             </a-menu-item>
           </a-menu>
         </template>
@@ -36,6 +36,7 @@
         <div class="teacher-link-container">
           <router-link to="/new-course" class="create-course-link">Создать курс</router-link>
           <a class="teacher-courses-link" @click="navigateToMyCoursesPage()">Мои курсы</a>
+          <a class="teacher-courses-link-report" @click="generateReport">Отчет</a>
         </div>
       </div>
       <div class="student-courses" v-if="userRoleId === 3">
@@ -108,14 +109,25 @@ export default {
   },
   methods:{
       async onSearch(){
-        console.log("Search Query:", this.searchValue);
         this.courseStore.searchQuery = this.searchValue.trim();
         try {
           const userId = this.userStore.user ? this.userStore.user.id : null;
+          const categoryId = this.$route.params.id;
           await this.courseStore.searchCourses(this.courseStore.searchQuery);
+          await this.courseStore.searchCoursesCategory(this.courseStore.searchQuery, categoryId);
           await this.courseStore.searchCoursesForUser(this.courseStore.searchQuery, userId);
         } catch (e) {
           console.error('Ошибка при выполнении поиска:', e);
+        }
+      },
+      async generateReport(){
+        try {
+          const response = await instance.post('/generate-report', {
+            teacherId: this.userStore.user.id,
+          });
+          console.log(response.data);
+        } catch (error) {
+          console.error('Ошибка при выполнении запроса на генерацию отчета:', error);
         }
       },
       showUserInfo(){
@@ -145,11 +157,19 @@ export default {
           router.push(`/users/${userId}/learning`);
         }
       },
-      async navigateToCategoriesPage(category){
+    async navigateToCategoriesPage(category){
+      try {
         const response = await instance.get(`/categories/${category.id}/courses`);
         this.courseStore.courseCategoryName = category.category_name;
         router.push(`/categories/${category.id}`);
-      },
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          router.push({ name: 'NotFoundPage' });
+        } else {
+          console.error('Ошибка при загрузке курсов категории:', error);
+        }
+      }
+    },
       navigateToCartPage(){
           router.push('/cart');
       },
@@ -241,6 +261,7 @@ export default {
   position: absolute;
   top: 17px;
   height: 24px;
+  margin-left: -50px;
 }
 .student-courses-link-container {
   position: absolute;
@@ -263,7 +284,7 @@ export default {
 }
 .cart-teacher-count{
   position: absolute;
-  margin: -30px 0 0 -25px;
+  margin: -30px 0 0 -45px;
   background-color: blue;
   color: white;
   border-radius: 50%;
@@ -299,7 +320,7 @@ export default {
   width: 24px;
   height: 24px;
   color: white;
-  margin: 14px 0 0 -40px;
+  margin: 14px 0 0 -60px;
   cursor: pointer;
 }
 
@@ -457,6 +478,16 @@ export default {
   margin: -5px 0 0 -10px;
 }
 .teacher-courses-link:hover{
+  color: white;
+}
+.teacher-courses-link-report{
+  font-family: "Rubik", sans-serif;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  margin: -5px 0 0 20px;
+}
+.teacher-courses-link-report:hover{
   color: white;
 }
 .student-courses{

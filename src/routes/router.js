@@ -1,5 +1,4 @@
 import SignPage from '@/pages/SignPage';
-// import NotFoundPage from '@/pages/NotFoundPage';
 import RegistrationPage from '@/pages/RegistrationPage';
 import { createRouter, createWebHistory } from 'vue-router';
 import MainPage from "@/pages/MainPage.vue";
@@ -13,6 +12,7 @@ import NewLessonPage from "@/pages/NewLessonPage.vue";
 import LessonPage from "@/pages/LessonPage.vue";
 import VideoRecordPage from "@/pages/VideoRecordPage.vue";
 import MyLearningPage from "@/pages/MyLearningPage.vue";
+import NotFoundPage from '@/pages/NotFoundPage.vue';
 
 
 
@@ -30,6 +30,14 @@ const routes = [
         component: RegistrationPage
     },
     {
+        path: '/record-video',
+        component: VideoRecordPage
+    },
+    {
+        path: '/new-course',
+        component: NewCoursePage
+    },
+    {
         path: '/users/:id',
         component: UserPage
     },
@@ -40,14 +48,6 @@ const routes = [
     {
         path: '/users/:id/learning',
         component: MyLearningPage
-    },
-    {
-        path: '/categories/:id',
-        component: CategoryCoursesPage,
-    },
-    {
-        path: '/new-course',
-        component: NewCoursePage
     },
     {
         path: '/courses/:id',
@@ -66,9 +66,14 @@ const routes = [
         component: LessonPage
     },
     {
-        path: '/record-video',
-        component: VideoRecordPage
-    }
+        path: '/categories/:id',
+        component: CategoryCoursesPage,
+    },
+    {
+        path: '/:pathMatch(.*)*',
+        name: 'NotFoundPage',
+        component: NotFoundPage,
+    },
 ];
 
 const router = createRouter({

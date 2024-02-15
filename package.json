@@ -21,7 +21,9 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
-    "@vue/cli-service": "~5.0.0"
+    "@vue/cli-service": "~5.0.0",
+    "laravel-echo": "^1.15.3",
+    "pusher-js": "^8.4.0-rc2"
   },
   "browserslist": [
     "> 1%",
