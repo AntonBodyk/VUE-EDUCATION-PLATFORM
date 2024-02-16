@@ -192,7 +192,6 @@ import router from "@/routes/router";
         try {
           const response = await instance.get('/roles');
           this.roles = response.data.roles;
-          console.log('Roles:', this.roles);
         } catch (error) {
           console.error('Error getting roles:', error);
         }

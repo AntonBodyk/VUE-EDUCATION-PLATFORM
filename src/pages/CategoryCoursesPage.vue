@@ -4,6 +4,9 @@
       <div class="courses-list-empty" v-if="showSpinner">
         <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
       </div>
+      <div class="courses-list-empty" v-if="!showSpinner && coursesStore.categoryCourses.length <= 0">
+        <h2 class="courses-list-empty-title">Курсы не найдены!</h2>
+      </div>
       <div class="category-courses" v-for="row in visibleCourseRows" :key="row[0].id" v-if="!showSpinner">
         <div class="course" v-for="course in row" :key="course.id" @click="navigateToCoursePage(course.id)">
           <img :src="course.course_img_url" alt="Sorry...">
@@ -220,5 +223,10 @@ export default {
   50% {
     transform: scale(1.5);
   }
+}
+
+.courses-list-empty-title{
+  margin: 20px 0 0 90px;
+  color: red;
 }
 </style>

@@ -15,12 +15,6 @@ import Footer from "@/components/UI/Footer.vue";
 export default {
   components:{
     Navbar, Footer
-  },
-  mounted() {
-    window.Echo.channel('public')
-        .listen('Hello', (e) => {
-          console.log(e);
-        })
   }
 }
 </script>
