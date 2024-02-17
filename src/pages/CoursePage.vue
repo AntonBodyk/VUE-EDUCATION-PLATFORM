@@ -19,6 +19,7 @@
           </div>
           <div class="course-lessons-block" v-for="lesson in lessons" :key="lesson.id">
              <div class="lesson-title" @click="navigateToLesson(lesson.id)">{{lesson.title}}</div>
+<!--             <span v-if=" isCourseCreator">✓</span>-->
               <a-space wrap v-if="isCourseCreator">
                 <a-button danger class="del-lesson" @click="showModal(lesson.id)">Удалить</a-button>
               </a-space>
@@ -31,6 +32,9 @@
 
                 </template>
               </a-modal>
+          </div>
+          <div class="quiz">
+            <a class="testing" @click="navigateToQuiz()">Тест</a>
           </div>
         </div>
       </div>
@@ -156,6 +160,9 @@ export default {
     },
     navigateToNewLesson(courseId){
       return router.push(`/new-lesson/${courseId}`);
+    },
+    navigateToQuiz(){
+      return router.push('/quiz');
     },
     navigateToLesson(lessonId){
       if(this.userStore.user){

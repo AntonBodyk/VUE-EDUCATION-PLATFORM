@@ -12,6 +12,7 @@ import NewLessonPage from "@/pages/NewLessonPage.vue";
 import LessonPage from "@/pages/LessonPage.vue";
 import VideoRecordPage from "@/pages/VideoRecordPage.vue";
 import MyLearningPage from "@/pages/MyLearningPage.vue";
+import QuizPage from "@/pages/QuizPage.vue";
 import NotFoundPage from '@/pages/NotFoundPage.vue';
 
 
@@ -24,6 +25,10 @@ const routes = [
     {
         path: '/sign',
         component: SignPage
+    },
+    {
+        path: '/quiz',
+        component: QuizPage
     },
     {
         path: '/registration',
