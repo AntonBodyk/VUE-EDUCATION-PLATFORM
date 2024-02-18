@@ -34,6 +34,9 @@
               </a-modal>
           </div>
           <div class="quiz">
+            <a-space wrap>
+              <a-button type="primary" class="add-new-test-btn" @click="navigateToNewTest(this.$route.params.id)">Создать тест</a-button>
+            </a-space>
             <a class="testing" @click="navigateToQuiz()">Тест</a>
           </div>
         </div>
@@ -160,6 +163,9 @@ export default {
     },
     navigateToNewLesson(courseId){
       return router.push(`/new-lesson/${courseId}`);
+    },
+    navigateToNewTest(testId){
+      return router.push(`/new-test/${testId}`);
     },
     navigateToQuiz(){
       return router.push('/quiz');
@@ -355,5 +361,8 @@ export default {
 }
 .del-lesson{
   margin-top: -10px;
+}
+.add-new-test-btn{
+  margin-top: 30px;
 }
 </style>

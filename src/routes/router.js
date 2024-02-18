@@ -14,6 +14,7 @@ import VideoRecordPage from "@/pages/VideoRecordPage.vue";
 import MyLearningPage from "@/pages/MyLearningPage.vue";
 import QuizPage from "@/pages/QuizPage.vue";
 import NotFoundPage from '@/pages/NotFoundPage.vue';
+import NewTestPage from "@/pages/NewTestPage.vue";
 
 
 
@@ -41,6 +42,10 @@ const routes = [
     {
         path: '/new-course',
         component: NewCoursePage
+    },
+    {
+        path: '/new-test/:id',
+        component: NewTestPage
     },
     {
         path: '/users/:id',
