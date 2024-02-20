@@ -36,6 +36,7 @@
         <div class="teacher-link-container">
           <router-link to="/new-course" class="create-course-link">Создать курс</router-link>
           <a class="teacher-courses-link" @click="navigateToMyCoursesPage()">Мои курсы</a>
+          <a class="teacher-courses-link-report" @click="generateReport()">Отчет</a>
         </div>
       </div>
       <div class="student-courses" v-if="userRoleId === 3">
@@ -117,6 +118,20 @@ export default {
           await this.courseStore.searchCoursesForUser(this.courseStore.searchQuery, userId);
         } catch (e) {
           console.error('Ошибка при выполнении поиска:', e);
+        }
+      },
+      async generateReport() {
+        const accessToken = localStorage.getItem('auth_token');
+        try {
+          const response = await instance.get('/generate-report', {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+            }
+          });
+          console.log(response.data);
+
+        } catch (error) {
+          console.error('Ошибка при выполнении запроса на генерацию отчета:', error);
         }
       },
       showUserInfo(){

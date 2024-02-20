@@ -18,8 +18,8 @@
             </a-space>
           </div>
           <div class="course-lessons-block" v-for="lesson in lessons" :key="lesson.id">
-             <div class="lesson-title" @click="navigateToLesson(lesson.id)">{{lesson.title}}</div>
-<!--             <span v-if=" isCourseCreator">✓</span>-->
+             <div class="lesson-title" @click="navigateToLesson(lesson.id), markLessonCompleted(lesson.id)">{{lesson.title}}</div>
+             <span v-if="lesson.completed">✓</span>
               <a-space wrap v-if="isCourseCreator">
                 <a-button danger class="del-lesson" @click="showModal(lesson.id)">Удалить</a-button>
               </a-space>
@@ -37,7 +37,9 @@
             <a-space wrap>
               <a-button type="primary" class="add-new-test-btn" @click="navigateToNewTest(this.$route.params.id)">Создать тест</a-button>
             </a-space>
-            <a class="testing" @click="navigateToQuiz()">Тест</a>
+            <div class="quiz-block" v-for="test in tests" :key="test.id">
+              <a class="testing" @click="navigateToQuiz(test.id)">{{test.title}}</a>
+            </div>
           </div>
         </div>
       </div>
@@ -89,6 +91,7 @@ export default {
     return{
       course: [],
       lessons: [],
+      tests: [],
       userStore: useUserStore(),
       courseStore: useCoursesStore(),
       rating: 0,
@@ -113,7 +116,13 @@ export default {
         this.course = courseResponse.data.data;
 
         const courseLessonResponse = await instance.get(`/courses/${courseId}/lessons`);
-        this.lessons = courseLessonResponse.data.data;
+        this.lessons = courseLessonResponse.data.data.map(lesson => ({
+          ...lesson,
+          completed: false
+        }));
+
+        const courseTestResponse = await instance.get(`/courses/${courseId}/tests`);
+        this.tests = courseTestResponse.data.data;
       }catch (error) {
         message.error('Ошибка при получении курсов:', error);
       }finally {
@@ -159,6 +168,12 @@ export default {
       const index = this.lessons.findIndex(lesson => lesson.id === lessonId);
       if (index !== -1) {
         this.lessons.splice(index, 1);
+      }
+    },
+    markLessonCompleted(lessonId) {
+      const lesson = this.lessons.find(lesson => lesson.id === lessonId);
+      if (lesson) {
+        lesson.completed = true;
       }
     },
     navigateToNewLesson(courseId){
@@ -364,5 +379,11 @@ export default {
 }
 .add-new-test-btn{
   margin-top: 30px;
+}
+.quiz-block{
+  margin-top: 20px;
+}
+.testing{
+  cursor: pointer;
 }
 </style>
