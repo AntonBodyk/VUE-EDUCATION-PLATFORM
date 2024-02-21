@@ -182,8 +182,8 @@ export default {
     navigateToNewTest(testId){
       return router.push(`/new-test/${testId}`);
     },
-    navigateToQuiz(){
-      return router.push('/quiz');
+    navigateToQuiz(testId){
+      return router.push(`/quiz/${testId}`);
     },
     navigateToLesson(lessonId){
       if(this.userStore.user){

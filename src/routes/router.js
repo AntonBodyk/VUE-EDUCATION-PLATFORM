@@ -28,7 +28,7 @@ const routes = [
         component: SignPage
     },
     {
-        path: '/quiz',
+        path: '/quiz/:id',
         component: QuizPage
     },
     {
