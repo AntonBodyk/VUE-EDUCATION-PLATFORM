@@ -24,4 +24,9 @@ export const useUserStore = defineStore('user', {
             localStorage.removeItem('auth_user');
         }
     },
+    getters:{
+        isUserExists: state => userId => {
+            return state.user && state.user.id === userId;
+        }
+    }
 });

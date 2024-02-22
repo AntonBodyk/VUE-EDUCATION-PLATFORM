@@ -19,7 +19,7 @@
           </div>
           <div class="course-lessons-block" v-for="lesson in lessons" :key="lesson.id">
              <div class="lesson-title" @click="navigateToLesson(lesson.id), markLessonCompleted(lesson.id)">{{lesson.title}}</div>
-             <span v-if="lesson.completed">✓</span>
+             <span v-if="lesson.completed === 1">✓</span>
               <a-space wrap v-if="isCourseCreator">
                 <a-button danger class="del-lesson" @click="showModal(lesson.id)">Удалить</a-button>
               </a-space>
@@ -34,11 +34,23 @@
               </a-modal>
           </div>
           <div class="quiz">
-            <a-space wrap>
+            <a-space wrap v-if="isCourseCreator">
               <a-button type="primary" class="add-new-test-btn" @click="navigateToNewTest(this.$route.params.id)">Создать тест</a-button>
             </a-space>
             <div class="quiz-block" v-for="test in tests" :key="test.id">
               <a class="testing" @click="navigateToQuiz(test.id)">{{test.title}}</a>
+              <a-space warp>
+                <a-button danger class="del-test-btn" @click ="showTestModal(test.id)" v-if="isCourseCreator">Удалить</a-button>
+              </a-space>
+              <a-modal v-model:open="open" title="Подтвердите удаление">
+                <a-space class="modal-btns">
+                  <a-button type="primary" @click="closeModal" ghost>Нет</a-button>
+                  <a-button type="primary" danger ghost @click="deleteTest(), closeModal()">Да</a-button>
+                </a-space>
+                <template #footer>
+
+                </template>
+              </a-modal>
             </div>
           </div>
         </div>
@@ -97,13 +109,18 @@ export default {
       rating: 0,
       showSpinner: false,
       open: false,
-      deleteLessonId: null
+      deleteLessonId: null,
+      deleteTestId: null
     }
   },
   methods:{
     showModal(lessonId){
       this.open = true;
       this.deleteLessonId = lessonId;
+    },
+    showTestModal(testId){
+      this.open = true;
+      this.deleteTestId = testId;
     },
     closeModal(){
       this.open = false;
@@ -116,10 +133,7 @@ export default {
         this.course = courseResponse.data.data;
 
         const courseLessonResponse = await instance.get(`/courses/${courseId}/lessons`);
-        this.lessons = courseLessonResponse.data.data.map(lesson => ({
-          ...lesson,
-          completed: false
-        }));
+        this.lessons = courseLessonResponse.data.data;
 
         const courseTestResponse = await instance.get(`/courses/${courseId}/tests`);
         this.tests = courseTestResponse.data.data;
@@ -170,10 +184,26 @@ export default {
         this.lessons.splice(index, 1);
       }
     },
+    async deleteTest(){
+      const testId = this.deleteTestId;
+      const deleteTestResponse = await instance.delete(`tests/${testId}`);
+      if (deleteTestResponse.status === 200){
+        this.removeTest(testId);
+        message.success('Тест успешно удален');
+      }else{
+        message.error('Ошибка при удалении теста');
+      }
+    },
+    removeTest(testId) {
+      const index = this.tests.findIndex(test => test.id === testId);
+      if (index !== -1) {
+        this.tests.splice(index, 1);
+      }
+    },
     markLessonCompleted(lessonId) {
       const lesson = this.lessons.find(lesson => lesson.id === lessonId);
       if (lesson) {
-        lesson.completed = true;
+        lesson.completed = 1;
       }
     },
     navigateToNewLesson(courseId){
@@ -214,6 +244,9 @@ export default {
 </script>
 
 <style scoped>
+.del-test-btn{
+  margin-left: 30px;
+}
 .course-structure{
   margin: 20px 0 0 50px;
 }

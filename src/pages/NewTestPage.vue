@@ -42,6 +42,7 @@ export default {
     return {
       userStore: useUserStore(),
       testTitle: '',
+      activeQuestionIndex: 0,
       questions: [{
         questionText: '',
         answers: [{ answerText: '', isCorrect: false }]
@@ -54,12 +55,33 @@ export default {
         questionText: '',
         answers: [{ answerText: '', isCorrect: false }]
       });
+      this.activeQuestionIndex = this.questions.length - 1;
     },
     addAnswer(questionIndex) {
       this.questions[questionIndex].answers.push({ answerText: '', isCorrect: false });
     },
     async submitTest() {
       const courseId = this.$route.params.id;
+
+      if (!this.testTitle.trim()) {
+        message.error('Введите название теста');
+        return;
+      }
+
+      for (const question of this.questions) {
+        if (!question.questionText.trim()) {
+          message.error('Введите текст вопроса');
+          return;
+        }
+
+        for (const answer of question.answers) {
+          if (!answer.answerText.trim()) {
+            message.error('Введите текст ответа');
+            return;
+          }
+        }
+      }
+
       try {
         const response = await instance.post('/tests', {
           questions: this.questions,

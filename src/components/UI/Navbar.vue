@@ -37,6 +37,7 @@
           <router-link to="/new-course" class="create-course-link">Создать курс</router-link>
           <a class="teacher-courses-link" @click="navigateToMyCoursesPage()">Мои курсы</a>
           <a class="teacher-courses-link-report" @click="generateReport()">Отчет</a>
+          <div class="loader" v-if="showSpinner"></div>
         </div>
       </div>
       <div class="student-courses" v-if="userRoleId === 3">
@@ -104,7 +105,8 @@ export default {
       searchValue: '',
       userStore: useUserStore(),
       courseStore: useCoursesStore(),
-      cartStore: useCartStore()
+      cartStore: useCartStore(),
+      showSpinner: false
     }
   },
   methods:{
@@ -121,6 +123,7 @@ export default {
         }
       },
       async generateReport() {
+        this.showSpinner = true;
         const accessToken = localStorage.getItem('auth_token');
         try {
           const response = await instance.get('/generate-report', {
@@ -132,6 +135,8 @@ export default {
 
         } catch (error) {
           console.error('Ошибка при выполнении запроса на генерацию отчета:', error);
+        }finally {
+          this.showSpinner = false;
         }
       },
       showUserInfo(){
@@ -261,6 +266,48 @@ export default {
 
 
 <style scoped>
+.loader {
+  height: 5px;
+  aspect-ratio: 5;
+  display: grid;
+  --_g: no-repeat radial-gradient(farthest-side,#000 94%,#0000);
+}
+.loader:before,
+.loader {
+  width: 30px;
+  height: 24px;
+  padding: 2px 0;
+  margin: -20px 0 0 330px;
+  box-sizing: border-box;
+  display: flex;
+  animation: l5-0 3s infinite steps(6);
+  background:
+      linear-gradient(#364d79 0 0) 0 0/0% 100% no-repeat,
+      radial-gradient(circle 3px,white 90%,#0000) 0 0/20% 100%
+      #364d79;
+  overflow: hidden;
+}
+.loader::before {
+  content: "";
+  width: 20px;
+  transform: translate(-100%);
+  border-radius: 50%;
+  background: white;
+  animation:
+      l5-1 .25s .153s infinite steps(5) alternate,
+      l5-2  3s        infinite linear;
+}
+@keyframes l5-1{
+  0% {clip-path: polygon(50% 50%,100%   0,100% 0,0 0,0 100%,100% 100%,100% 100%)}
+  100% {clip-path: polygon(50% 50%,100% 65%,100% 0,0 0,0 100%,100% 100%,100%  35%)}
+}
+@keyframes l5-2{
+  100% {transform: translate(90px)}
+}
+@keyframes l5-0{
+  100% {background-size:120% 100%,20% 100%}
+}
+
 .teacher-link-container{
   position: absolute;
   top: 17px;
@@ -472,7 +519,7 @@ export default {
   font-size: 18px;
 }
 .teacher-courses{
-  margin: 0 0 0 150px;
+  margin: 0 0 0 100px;
 }
 .teacher-courses-link{
   font-family: "Rubik", sans-serif;

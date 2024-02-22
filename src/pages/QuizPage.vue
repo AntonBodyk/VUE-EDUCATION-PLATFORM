@@ -4,24 +4,27 @@
       <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     </div>
     <div class="test-page-block">
-      <div v-for="(question, index) in questions" :key="index" v-if="currentQuestionIndex < questions.length && !showResults">
-        <h3>{{ question.question_title }}</h3>
-        <div v-for="(answer, answerIndex) in question.answers" :key="answerIndex">
+      <div v-if="currentQuestion && !showResults && !showSpinner">
+        <h3>{{ currentQuestion.question_title }}</h3>
+        <div v-for="(answer, answerIndex) in currentQuestion.answers" :key="answerIndex">
           <label class="checkbox-container">
-            <input type="checkbox" v-model="selectedAnswers[index]" :value="answer.answer_text" class="answer-checkbox">
+            <input type="checkbox" v-model="selectedAnswers[currentQuestionIndex]" :value="answer.answer_text" class="answer-checkbox">
             <span class="checkmark"></span>
           </label>
           <p class="answer-text">{{ answer.answer_text }}</p>
         </div>
         <a-space wrap>
-          <a-button type="primary" @click="submitAnswer(index)" class="answer-question">Ответить</a-button>
+          <a-button type="primary" @click="submitAnswer(currentQuestionIndex)" class="answer-question">Ответить</a-button>
         </a-space>
       </div>
       <div v-if="showResults">
         <h2>Результаты теста:</h2>
-        <p>Правильных ответов: {{ correctAnswers }}</p>
+        <h3>{{ resultTitle }}</h3>
+        <p>{{ resultMessage }}</p>
+        <p>Правильных ответов: {{ correctAnswers }} из {{ questions.length }}</p>
         <a-space wrap>
-          <a-button type="primary" @click="navigateToMainPage">Перейти на главную</a-button>
+          <a-button type="primary" @click="navigateToMainPage">Вернуться к курсу</a-button>
+          <a-button type="primary" @click="returnToQuizAgain">Пройти тест еще раз</a-button>
         </a-space>
       </div>
     </div>
@@ -30,9 +33,9 @@
 
 <script>
 import { instance } from '@/axios/axiosInstance';
-import {useUserStore} from "@/store/userStore";
+import { useUserStore } from "@/store/userStore";
 import router from "@/routes/router";
-import {message} from "ant-design-vue";
+import { message } from "ant-design-vue";
 
 export default {
   data() {
@@ -61,7 +64,7 @@ export default {
       this.setCurrentQuestion();
     } catch (error) {
       console.error('Ошибка при загрузке данных теста:', error);
-    }finally {
+    } finally {
       this.showSpinner = false;
     }
   },
@@ -71,6 +74,7 @@ export default {
       console.log(selectedAnswers);
       const question = this.questions[questionIndex];
       const testId = this.$route.params.id;
+      this.showSpinner = true;
       try {
         const response = await instance.post(`/tests/${testId}/submit-answer`, {
           question_id: question.id,
@@ -80,12 +84,10 @@ export default {
         console.log(response.data);
         const correctAnswers = response.data.correctAnswers;
 
-        // Сохраняем результаты теста в таблице completed_tests
-        await this.saveTestResults(correctAnswers);
+        this.correctAnswers += correctAnswers;
 
-        // Показываем результаты теста пользователю
-        this.showResults = true;
-        this.correctAnswers = correctAnswers;
+        // Сохраняем результаты теста в таблице completed_tests
+        await this.saveTestResults(this.correctAnswers);
 
         // Проверяем, есть ли еще вопросы
         if (this.currentQuestionIndex < this.questions.length - 1) {
@@ -97,6 +99,8 @@ export default {
         }
       } catch (error) {
         console.error('Ошибка при отправке ответа:', error);
+      } finally {
+        this.showSpinner = false;
       }
     },
     async saveTestResults(correctAnswers) {
@@ -113,9 +117,12 @@ export default {
         console.error('Ошибка при сохранении результатов теста:', error);
       }
     },
-    navigateToMainPage(){
+    navigateToMainPage() {
       message.success('Поздравляем, Вы закончили курс!');
       return router.back();
+    },
+    returnToQuizAgain(){
+      return window.location.reload();
     },
     setCurrentQuestion() {
       // Устанавливаем текущий вопрос
@@ -124,11 +131,32 @@ export default {
     nextQuestion() {
       // Увеличиваем индекс текущего вопроса
       this.currentQuestionIndex++;
-      // Проверяем, есть ли еще вопросы
-      if (this.currentQuestionIndex < this.questions.length) {
-        // Если есть, устанавливаем следующий вопрос
-        this.setCurrentQuestion();
+      // Устанавливаем текущий вопрос
+      this.setCurrentQuestion();
+    },
+  },
+  computed: {
+    resultTitle() {
+      let title;
+      if (this.correctAnswers === this.questions.length) {
+        title = 'Поздравляем! 🏆';
+      } else if ((this.correctAnswers * 100) / this.questions.length >= 50) {
+        title = 'Неплохой результат! 😉';
+      } else {
+        title = 'Стоит постараться! 😐';
       }
+      return title;
+    },
+    resultMessage() {
+      let message;
+      if (this.correctAnswers === this.questions.length) {
+        message = 'Вы ответили правильно на все вопросы! 👍';
+      } else if ((this.correctAnswers * 100) / this.questions.length >= 50) {
+        message = 'Вы ответили правильно на большую часть вопросов! 👍';
+      } else {
+        message = 'Вы ответили неправильно! Попробуйте пройти тест снова!';
+      }
+      return message;
     }
   }
 };

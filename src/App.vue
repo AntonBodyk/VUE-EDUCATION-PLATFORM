@@ -19,6 +19,7 @@ export default {
   mounted() {
     window.Echo.channel('reportGeneration')
         .listen('PdfGenerated', (event) => {
+          console.log(event);
           if (event && event.pdfUrl) {
 
 
