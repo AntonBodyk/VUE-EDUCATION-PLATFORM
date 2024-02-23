@@ -1,5 +1,8 @@
 <template>
-  <div class="lesson-page">
+  <div v-if="lessonNotFound">
+    <NotFoundPage/>
+  </div>
+  <div class="lesson-page" v-else>
     <div class="courses-list-empty" v-if="showSpinner">
       <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     </div>
@@ -28,11 +31,16 @@
 <script>
 import {instance} from "@/axios/axiosInstance";
 import {message} from "ant-design-vue";
+import NotFoundPage from "@/pages/NotFoundPage.vue";
+import {useRoute} from "vue-router";
 export default {
+  components: {NotFoundPage},
   data(){
     return{
         lesson: [],
-        showSpinner: false
+        showSpinner: false,
+        lessonNotFound: false,
+        route: useRoute(),
     }
   },
   methods:{
@@ -49,8 +57,12 @@ export default {
 
         const lessonsResponse = await instance.get(`/lessons/${lessonId}`);
         this.lesson = lessonsResponse.data.data;
-      }catch (e) {
-        message.error('Ошибка при получении урока!');
+      }catch (error) {
+        if (error.response && error.response.status === 404) {
+          this.lessonNotFound = true;
+        } else {
+          console.error('Error fetching post data', error);
+        }
       }finally {
         this.showSpinner = false;
       }

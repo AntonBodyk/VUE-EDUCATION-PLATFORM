@@ -177,10 +177,9 @@ export default {
               }
             });
 
-        // Проверяем формат ответа
+
         console.log("Server Response:", response.data);
 
-        // Обновляем локальные данные пользователя на фронтенде только после успешного ответа от сервера
         if (response.data.user) {
           userStore.setUser(response.data.user);
           console.log("Updated Locally:", userStore.user);

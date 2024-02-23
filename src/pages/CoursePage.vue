@@ -1,12 +1,14 @@
 <template>
-  <div class="course-page">
+  <div v-if="courseNotFound">
+    <NotFoundPage></NotFoundPage>
+  </div>
+  <div class="course-page" v-else>
     <div class="courses-list-empty" v-if="showSpinner">
       <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     </div>
     <div class="course-page-content" v-if="!showSpinner">
       <h1 class="course-title">{{course.title}}</h1>
       <p v-if="course.author" class="course-author">Автор: {{ course.author.second_name }} {{ course.author.first_name }} {{ course.author.last_name }}</p>
-
 
       <div class="course-structure">
         <h2>Материалы курса</h2>
@@ -95,9 +97,11 @@ import StarRating from 'vue-star-rating';
 import {useUserStore} from "@/store/userStore";
 import {useCoursesStore} from "@/store/courseStore";
 import router from "@/routes/router";
+import NotFoundPage from "@/pages/NotFoundPage.vue";
+import { useRoute } from 'vue-router';
 export default {
   components:{
-    CoursePageSidebar, StarRating
+    CoursePageSidebar, StarRating, NotFoundPage
   },
   data(){
     return{
@@ -110,7 +114,9 @@ export default {
       showSpinner: false,
       open: false,
       deleteLessonId: null,
-      deleteTestId: null
+      deleteTestId: null,
+      courseNotFound: false,
+      route: useRoute(),
     }
   },
   methods:{
@@ -138,7 +144,11 @@ export default {
         const courseTestResponse = await instance.get(`/courses/${courseId}/tests`);
         this.tests = courseTestResponse.data.data;
       }catch (error) {
-        message.error('Ошибка при получении курсов:', error);
+        if (error.response && error.response.status === 404) {
+          this.courseNotFound = true;
+        } else {
+          console.error('Error fetching post data', error);
+        }
       }finally {
         this.showSpinner = false;
       }

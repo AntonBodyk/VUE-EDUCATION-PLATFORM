@@ -1,5 +1,8 @@
 <template>
-    <div class="category-page">
+  <div v-if="categoryNotFound">
+    <NotFoundPage/>
+  </div>
+    <div class="category-page" v-else>
       <h1 v-if="!showSpinner">Курсы в категории "{{coursesStore.courseCategoryName}}"</h1>
       <div class="courses-list-empty" v-if="showSpinner">
         <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
@@ -36,10 +39,12 @@ import {useCoursesStore} from "@/store/courseStore";
 import {instance} from "@/axios/axiosInstance";
 import StarRating from 'vue-star-rating';
 import router from "@/routes/router";
+import NotFoundPage from "@/pages/NotFoundPage.vue";
+import {useRoute} from "vue-router";
 
 export default {
   components:{
-    StarRating
+    StarRating, NotFoundPage
   },
   data(){
     return{
@@ -47,7 +52,9 @@ export default {
       categoryCourse: [],
       coursesPerRow: 5,
       visibleCoursesCount: 15,
-      showSpinner: false
+      showSpinner: false,
+      categoryNotFound: false,
+      route: useRoute(),
     }
   },
   methods: {
@@ -59,7 +66,11 @@ export default {
         const categoryCoursesResponse = await instance.get(`/categories/${categoryId}/courses`);
         this.coursesStore.setCategoryCourses(categoryCoursesResponse.data.data);
       } catch (error) {
-        console.error('Ошибка при получении курсов:', error);
+        if (error.response && error.response.status === 404) {
+          this.categoryNotFound = true;
+        } else {
+          console.error('Error fetching post data', error);
+        }
       } finally {
         this.showSpinner = false;
       }

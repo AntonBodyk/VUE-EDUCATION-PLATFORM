@@ -74,9 +74,6 @@ export const useCoursesStore = defineStore( 'course', {
         }
     },
     getters:{
-        isCourseExists: state => courseId => {
-            return state.courses.some(course => course.id === courseId);
-        },
         authorCourses(state){
             if (state.authUser && state.authUser.id) {
                 return state.courses.filter(course => course.author_id === state.authUser.id);

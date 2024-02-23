@@ -1,5 +1,8 @@
 <template>
-  <div class="test-page">
+  <div v-if="quizNotFound">
+    <NotFoundPage/>
+  </div>
+  <div class="test-page" v-else>
     <div class="courses-list-empty" v-if="showSpinner">
       <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     </div>
@@ -36,8 +39,13 @@ import { instance } from '@/axios/axiosInstance';
 import { useUserStore } from "@/store/userStore";
 import router from "@/routes/router";
 import { message } from "ant-design-vue";
+import NotFoundPage from "@/pages/NotFoundPage.vue";
+import {useRoute} from "vue-router";
 
 export default {
+  components:{
+    NotFoundPage
+  },
   data() {
     return {
       questions: [],
@@ -47,7 +55,9 @@ export default {
       correctAnswers: 0,
       showSpinner: false,
       currentQuestionIndex: 0,
-      currentQuestion: null
+      currentQuestion: null,
+      quizNotFound: false,
+      route: useRoute(),
     };
   },
   async mounted() {
@@ -63,7 +73,11 @@ export default {
 
       this.setCurrentQuestion();
     } catch (error) {
-      console.error('Ошибка при загрузке данных теста:', error);
+      if (error.response && error.response.status === 404) {
+        this.quizNotFound = true;
+      } else {
+        console.error('Error fetching post data', error);
+      }
     } finally {
       this.showSpinner = false;
     }
@@ -71,7 +85,6 @@ export default {
   methods: {
     async submitAnswer(questionIndex) {
       const selectedAnswers = this.selectedAnswers[questionIndex];
-      console.log(selectedAnswers);
       const question = this.questions[questionIndex];
       const testId = this.$route.params.id;
       this.showSpinner = true;
@@ -80,21 +93,17 @@ export default {
           question_id: question.id,
           selected_answers: selectedAnswers
         });
-        // После получения ответа от сервера
-        console.log(response.data);
+
         const correctAnswers = response.data.correctAnswers;
 
         this.correctAnswers += correctAnswers;
 
-        // Сохраняем результаты теста в таблице completed_tests
+
         await this.saveTestResults(this.correctAnswers);
 
-        // Проверяем, есть ли еще вопросы
         if (this.currentQuestionIndex < this.questions.length - 1) {
-          // Если есть, переходим к следующему вопросу
           this.nextQuestion();
         } else {
-          // Иначе показываем результаты
           this.showResults = true;
         }
       } catch (error) {
@@ -125,13 +134,10 @@ export default {
       return window.location.reload();
     },
     setCurrentQuestion() {
-      // Устанавливаем текущий вопрос
       this.currentQuestion = this.questions[this.currentQuestionIndex];
     },
     nextQuestion() {
-      // Увеличиваем индекс текущего вопроса
       this.currentQuestionIndex++;
-      // Устанавливаем текущий вопрос
       this.setCurrentQuestion();
     },
   },
