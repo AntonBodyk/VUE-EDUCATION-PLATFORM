@@ -50,15 +50,15 @@
       </div>
       <div class="user-initials" v-if="userAuth">
         <div class="user-icons">
-          <img v-if="userAvatar && userAvatar.length > 0" :src="userAvatar" @click="navigateToUserPage()" class="user-photo" alt="User Avatar" @mouseover="showUserInfo" />
-          <div v-else class="user-avatar" @mouseover="showUserInfo" @click="navigateToUserPage()" >{{ userAvatar && userAvatar.length > 0 ? '' : userInitials }} </div>
+          <img v-if="userAvatar && userAvatar.length !== undefined && userAvatar.length > 0" :src="userAvatar" @click="navigateToUserPage()" class="user-photo" alt="User Avatar" @mouseover="showUserInfo" />
+          <div v-else class="user-avatar" @mouseover="showUserInfo" @click="navigateToUserPage()" >{{ userAvatar ? '' : userInitials }} </div>
         </div>
 
         <a-space wrap>
           <div class="user-info-block" :style="{ display: showInfoBlock ? 'block' : 'none' }" @mouseover="keepUserInfoVisible" @mouseleave="closeUserInfo">
             <div class="user-info">
               <img v-if="userAvatar && userAvatar.length > 0" :src="userAvatar" class="user-photo" alt="User Avatar" />
-              <div v-else class="user-info-avatar">{{ userInitials && userAvatar.length > 0 ? '' : userInitials}}</div>
+              <div v-else class="user-info-avatar">{{ userAvatar && userAvatar.length > 0 ? '' : userInitials}}</div>
             </div>
             <div class="user-details">
               <p @click="navigateToUserPage()" class="user-name">{{ userSecondName + ' ' + userName + ' ' + userLastName }}</p>
@@ -68,13 +68,12 @@
           </div>
         </a-space>
       </div>
-
-      <a-space wrap v-else>
-        <ShoppingCartOutlined class="shop-cart" @click="navigateToCartPage"/>
-        <span class="cart-count"  v-if="cartStore.cartCourses.length > 0">{{cartItemCount}}</span>
-        <a-button ghost class="sign-btn" @click="$router.push('/sign')">Войти</a-button>
-        <a-button type="primary" class="registration-btn" @click="$router.push('/registration')">Регистрация</a-button>
-      </a-space>
+    <a-space wrap v-else>
+      <ShoppingCartOutlined class="shop-cart" @click="navigateToCartPage"/>
+      <span class="cart-count"  v-if="cartStore.cartCourses.length > 0">{{cartItemCount}}</span>
+      <a-button ghost class="sign-btn" @click="$router.push('/sign')">Войти</a-button>
+      <a-button type="primary" class="registration-btn" @click="$router.push('/registration')">Регистрация</a-button>
+    </a-space>
     </div>
   </div>
 
@@ -216,47 +215,47 @@ export default {
   mounted() {
     this.getCourseCaregories();
   },
-  computed:{
-    cartItemCount(){
-      return this.cartStore.cartCourses.length;
+  computed: {
+    cartItemCount() {
+      if (this.cartStore && this.cartStore.cartCourses) {
+        return this.cartStore.cartCourses.length;
+      } else {
+        return 0;
+      }
     },
-    userName(){
-      return this.userStore.user ? this.userStore.user.first_name : null;
+    userName() {
+      return this.userStore && this.userStore.user ? this.userStore.user.first_name : null;
     },
-    userSecondName(){
-      return this.userStore.user ? this.userStore.user.second_name : null;
+    userSecondName() {
+      return this.userStore && this.userStore.user ? this.userStore.user.second_name : null;
     },
-    userLastName(){
-      return this.userStore.user ? this.userStore.user.last_name : null;
+    userLastName() {
+      return this.userStore && this.userStore.user ? this.userStore.user.last_name : null;
     },
-    combinedName(){
-      return this.userName + ' ' + this.userLastName;
+    combinedName() {
+      return this.userName && this.userLastName ? this.userName + ' ' + this.userLastName : null;
     },
-    userEmail(){
-      return this.userStore.user ? this.userStore.user.email : null;
+    userEmail() {
+      return this.userStore && this.userStore.user ? this.userStore.user.email : null;
     },
-    userRoleId(){
-      return this.userStore.user ? this.userStore.user.role_id : null;
+    userRoleId() {
+      return this.userStore && this.userStore.user ? this.userStore.user.role_id : null;
     },
-    userAvatar(){
-      return this.userStore.user ? this.userStore.user.avatar : null;
+    userAvatar() {
+      return this.userStore && this.userStore.user ? this.userStore.user.avatar : null;
     },
-    userAuth(){
-      return this.userStore.token !== null;
+    userAuth() {
+      return this.userStore && this.userStore.token !== null;
     },
     userInitials() {
-      const userName = this.userStore.user ? this.userStore.user.first_name : null;
-      const lastName = this.userStore.user ? this.userStore.user.last_name : null;
-
-      const combinedName = userName + ' ' + lastName;
-
-      if(combinedName){
-        const initials = this.combinedName
+      if (this.combinedName) {
+        return this.combinedName
             .split(" ")
             .map((word) => word[0])
-            .join("");
-        return initials.slice(0, 2).toUpperCase();
-      }else{
+            .join("")
+            .slice(0, 2)
+            .toUpperCase();
+      } else {
         return null;
       }
     },
